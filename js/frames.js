@@ -1,6 +1,6 @@
 // ── CONFIGURACIÓN ─────────────────────────────────────────
-const TOTAL_FRAMES = 120;        // Cambia por el número real de frames
-const FRAMES_PATH = "../frames/"; // Ruta a la carpeta de frames
+const TOTAL_FRAMES = 121;        // Frames extraídos por extract_frames.py (1 de cada 2)
+const FRAMES_PATH = "frames/";   // Ruta a la carpeta de frames (relativa a index.html)
 const FRAME_PREFIX = "frame_";   // Prefijo del nombre de cada frame
 const FRAME_EXT = ".jpg";        // Extensión de los frames
 const FRAME_DIGITS = 4;          // Dígitos del número: frame_0001.jpg
@@ -10,10 +10,12 @@ const canvas = document.getElementById("frameCanvas");
 const ctx = canvas.getContext("2d");
 const hero = document.getElementById("hero");
 const heroContent = document.getElementById("heroContent");
+const heroLoader = document.getElementById("heroLoader");
+const heroProgress = document.getElementById("heroProgress");
 
-// Precargar todas las imágenes
 const frames = [];
 let loadedCount = 0;
+let firstFrameDrawn = false;
 
 function padNumber(n, digits) {
   return String(n).padStart(digits, "0");
@@ -29,10 +31,17 @@ function preloadFrames() {
     img.src = getFramePath(i);
     img.onload = () => {
       loadedCount++;
-      if (loadedCount === 1) {
-        // Dibuja el primer frame inmediatamente
-        drawFrame(0);
+      const pct = (loadedCount / TOTAL_FRAMES) * 100;
+      if (heroProgress) heroProgress.style.width = pct + "%";
+
+      if (!firstFrameDrawn && i === 0) {
         resizeCanvas();
+        drawFrame(0);
+        firstFrameDrawn = true;
+      }
+
+      if (loadedCount === TOTAL_FRAMES && heroLoader) {
+        heroLoader.classList.add("hidden");
       }
     };
     frames[i] = img;
@@ -40,48 +49,71 @@ function preloadFrames() {
 }
 
 function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = window.innerWidth * dpr;
+  canvas.height = window.innerHeight * dpr;
+  canvas.style.width = window.innerWidth + "px";
+  canvas.style.height = window.innerHeight + "px";
 }
 
 function drawFrame(index) {
-  const img = frames[Math.min(Math.max(index, 0), TOTAL_FRAMES - 1)];
-  if (!img || !img.complete) return;
+  const i = Math.min(Math.max(index, 0), TOTAL_FRAMES - 1);
+  const img = frames[i];
+  if (!img || !img.complete || !img.naturalWidth) return;
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // Cover — igual que CSS object-fit: cover
+  // Cover — equivalente a CSS object-fit: cover
   const scale = Math.max(
     canvas.width / img.naturalWidth,
     canvas.height / img.naturalHeight
   );
-  const x = (canvas.width - img.naturalWidth * scale) / 2;
-  const y = (canvas.height - img.naturalHeight * scale) / 2;
-  ctx.drawImage(img, x, y, img.naturalWidth * scale, img.naturalHeight * scale);
+  const w = img.naturalWidth * scale;
+  const h = img.naturalHeight * scale;
+  const x = (canvas.width - w) / 2;
+  const y = (canvas.height - h) / 2;
+  ctx.drawImage(img, x, y, w, h);
 }
 
-// ── SCROLL LOGIC ───────────────────────────────────────────
-window.addEventListener("scroll", () => {
+// ── SCROLL DRIVEN ──────────────────────────────────────────
+let targetFrame = 0;
+let currentFrame = 0;
+let rafId = null;
+
+function onScroll() {
   const scrollTop = window.scrollY;
   const heroHeight = hero.offsetHeight - window.innerHeight;
   const progress = Math.min(Math.max(scrollTop / heroHeight, 0), 1);
 
-  // Frame según el progreso del scroll
-  const frameIndex = Math.floor(progress * (TOTAL_FRAMES - 1));
-  drawFrame(frameIndex);
+  targetFrame = progress * (TOTAL_FRAMES - 1);
 
-  // Mostrar el texto hero cuando el scroll llega al final
   if (progress > 0.85) {
     heroContent.classList.add("visible");
   } else {
     heroContent.classList.remove("visible");
   }
-});
 
-// ── INIT ───────────────────────────────────────────────────
+  if (!rafId) rafId = requestAnimationFrame(animate);
+}
+
+function animate() {
+  // Easing suave hacia el frame objetivo
+  currentFrame += (targetFrame - currentFrame) * 0.18;
+  drawFrame(Math.round(currentFrame));
+
+  if (Math.abs(targetFrame - currentFrame) > 0.05) {
+    rafId = requestAnimationFrame(animate);
+  } else {
+    currentFrame = targetFrame;
+    drawFrame(Math.round(currentFrame));
+    rafId = null;
+  }
+}
+
+window.addEventListener("scroll", onScroll, { passive: true });
 window.addEventListener("resize", () => {
   resizeCanvas();
-  drawFrame(0);
+  drawFrame(Math.round(currentFrame));
 });
 
 preloadFrames();

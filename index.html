@@ -4,27 +4,41 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DJ Create — Tu presencia digital, reinventada</title>
+  <meta name="description" content="Agencia de diseño web 3D e inmersivo en Murcia. Webs cinematográficas que convierten visitantes en clientes.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Syne:wght@500;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
-  <!-- NAV -->
-  <nav id="nav">
-    <a href="#" class="nav-logo">DJ Create</a>
+  <!-- NAV FLOTANTE -->
+  <nav id="nav" class="nav-pill">
+    <a href="#hero" class="nav-logo" data-scroll>
+      <span class="nav-logo-mark">●</span>
+      DJ Create
+    </a>
     <ul class="nav-links">
-      <li><a href="#servicios">Servicios</a></li>
-      <li><a href="#proceso">Proceso</a></li>
-      <li><a href="#portafolio">Portafolio</a></li>
-      <li><a href="#contacto">Contacto</a></li>
+      <li><a href="#hero" data-scroll>Inicio</a></li>
+      <li><a href="#servicios" data-scroll>Servicios</a></li>
+      <li><a href="#portafolio" data-scroll>Portafolio</a></li>
+      <li><a href="#nosotros" data-scroll>Nosotros</a></li>
+      <li><a href="#contacto" data-scroll>Contacto</a></li>
     </ul>
-    <a href="#contacto" class="nav-cta">Pide presupuesto</a>
+    <a href="#contacto" class="nav-cta" data-scroll>CONTACTO</a>
   </nav>
 
-  <!-- HERO — SCROLL DRIVEN SEQUENCE -->
+  <!-- HERO — SCROLL DRIVEN -->
   <section id="hero">
     <div id="scrollCanvas">
       <canvas id="frameCanvas"></canvas>
     </div>
+
+    <div id="heroLoader" class="hero-loader">
+      <div class="hero-loader-bar"><span id="heroProgress"></span></div>
+      <p>Cargando experiencia</p>
+    </div>
+
     <div class="hero-overlay">
       <div class="hero-content" id="heroContent">
         <p class="hero-tag">Agencia de diseño web · Murcia</p>
@@ -33,11 +47,12 @@
         </h1>
         <p class="hero-sub">Creamos experiencias web 3D e inmersivas que convierten visitantes en clientes.</p>
         <div class="hero-btns">
-          <a href="#portafolio" class="btn-main">Ver proyectos</a>
-          <a href="#contacto" class="btn-ghost">Hablemos →</a>
+          <a href="#portafolio" class="btn-main" data-scroll>Ver proyectos</a>
+          <a href="#contacto" class="btn-ghost" data-scroll>Hablemos →</a>
         </div>
       </div>
     </div>
+
     <div class="scroll-hint">
       <span>Scroll</span>
       <div class="scroll-bar"></div>
@@ -45,24 +60,260 @@
   </section>
 
   <!-- SERVICIOS -->
-  <section id="servicios">
-    <!-- Contenido aquí -->
+  <section id="servicios" class="section section-servicios">
+    <div class="section-head reveal">
+      <p class="section-eyebrow">— 01 / Servicios</p>
+      <h2 class="section-title">Planes a medida<br><span class="grad">para cada visión.</span></h2>
+      <p class="section-lead">Desde landing pages que convierten hasta experiencias 3D cinematográficas. Elige el plan que encaje con tu proyecto.</p>
+    </div>
+
+    <div class="plans-grid">
+      <article class="plan-card reveal">
+        <header class="plan-head">
+          <p class="plan-name">Plan Básico</p>
+          <p class="plan-price"><span>300</span><em>€</em></p>
+        </header>
+        <p class="plan-desc">Web one-page profesional para autónomos y pequeños negocios. Diseño limpio, rápida y optimizada.</p>
+        <ul class="plan-features">
+          <li>Diseño one-page responsive</li>
+          <li>Hasta 4 secciones</li>
+          <li>Formulario de contacto</li>
+          <li>SEO básico on-page</li>
+          <li>Hosting + dominio (1er año)</li>
+        </ul>
+        <a href="#contacto" class="plan-cta" data-scroll>Empezar</a>
+      </article>
+
+      <article class="plan-card plan-card-feature reveal">
+        <span class="plan-badge">Más popular</span>
+        <header class="plan-head">
+          <p class="plan-name">Plan Avanzado</p>
+          <p class="plan-price"><span>400</span><em>€</em></p>
+        </header>
+        <p class="plan-desc">Web multipágina con animaciones avanzadas, blog y panel para gestionar contenidos.</p>
+        <ul class="plan-features">
+          <li>Hasta 6 páginas a medida</li>
+          <li>Animaciones GSAP / scroll</li>
+          <li>Blog con CMS</li>
+          <li>SEO técnico avanzado</li>
+          <li>Analytics + dashboard</li>
+          <li>2 meses de soporte</li>
+        </ul>
+        <a href="#contacto" class="plan-cta plan-cta-solid" data-scroll>Empezar</a>
+      </article>
+
+      <article class="plan-card reveal">
+        <header class="plan-head">
+          <p class="plan-name">Plan 3D</p>
+          <p class="plan-price"><span>500</span><em>€</em></p>
+        </header>
+        <p class="plan-desc">Experiencia inmersiva con escenas 3D, scroll cinematográfico y modelado a medida.</p>
+        <ul class="plan-features">
+          <li>Escenas 3D con Three.js</li>
+          <li>Animaciones scroll-driven</li>
+          <li>Modelado básico incluido</li>
+          <li>Optimización móvil</li>
+          <li>Diseño cinematográfico</li>
+        </ul>
+        <a href="#contacto" class="plan-cta" data-scroll>Empezar</a>
+      </article>
+
+      <article class="plan-card reveal">
+        <header class="plan-head">
+          <p class="plan-name">Plan Tienda</p>
+          <p class="plan-price"><span>desde 800</span><em>€</em></p>
+        </header>
+        <p class="plan-desc">Tienda online completa con pasarela de pago, gestión de productos y envíos.</p>
+        <ul class="plan-features">
+          <li>Catálogo ilimitado</li>
+          <li>Stripe / Redsys integrado</li>
+          <li>Panel de gestión</li>
+          <li>Cupones y descuentos</li>
+          <li>Email transaccional</li>
+          <li>Formación incluida</li>
+        </ul>
+        <a href="#contacto" class="plan-cta" data-scroll>Empezar</a>
+      </article>
+    </div>
   </section>
 
   <!-- PROCESO -->
-  <section id="proceso">
-    <!-- Contenido aquí -->
+  <section id="proceso" class="section section-proceso">
+    <div class="section-head reveal">
+      <p class="section-eyebrow">— 02 / Proceso</p>
+      <h2 class="section-title">Cómo trabajamos<br><span class="grad">de la idea al directo.</span></h2>
+      <p class="section-lead">Un proceso claro, rápido y sin sorpresas. Cuatro fases para llevar tu proyecto del brief al lanzamiento.</p>
+    </div>
+
+    <ol class="steps">
+      <li class="step reveal">
+        <span class="step-num">01</span>
+        <h3 class="step-title">Descubrimiento</h3>
+        <p class="step-desc">Te escuchamos. Definimos objetivos, público y referencias para entender tu proyecto a fondo.</p>
+      </li>
+      <li class="step reveal">
+        <span class="step-num">02</span>
+        <h3 class="step-title">Diseño</h3>
+        <p class="step-desc">Wireframes y mockups de alta fidelidad. Iteramos contigo hasta que cada pixel encaja.</p>
+      </li>
+      <li class="step reveal">
+        <span class="step-num">03</span>
+        <h3 class="step-title">Desarrollo</h3>
+        <p class="step-desc">Código limpio, animaciones a medida y pruebas en cada navegador. Nada de plantillas.</p>
+      </li>
+      <li class="step reveal">
+        <span class="step-num">04</span>
+        <h3 class="step-title">Lanzamiento</h3>
+        <p class="step-desc">Despliegue, SEO técnico, formación y soporte. Tu web vuela el primer día.</p>
+      </li>
+    </ol>
   </section>
 
   <!-- PORTAFOLIO -->
-  <section id="portafolio">
-    <!-- Contenido aquí -->
+  <section id="portafolio" class="section section-portafolio">
+    <div class="section-head reveal">
+      <p class="section-eyebrow">— 03 / Portafolio</p>
+      <h2 class="section-title">Trabajos<br><span class="grad">recientes.</span></h2>
+      <p class="section-lead">Una selección de proyectos donde diseño y código se encuentran.</p>
+    </div>
+
+    <div class="portfolio-grid">
+      <a href="#" class="portfolio-card portfolio-card-lg reveal">
+        <div class="portfolio-thumb" style="--c1:#0FB5BA;--c2:#7C3AED;"></div>
+        <div class="portfolio-meta">
+          <span class="portfolio-tag">3D · Inmersivo</span>
+          <h3 class="portfolio-title">Aurora Studio</h3>
+          <p class="portfolio-desc">Web cinematográfica con scroll-driven 3D para estudio creativo.</p>
+        </div>
+      </a>
+
+      <a href="#" class="portfolio-card reveal">
+        <div class="portfolio-thumb" style="--c1:#EC4899;--c2:#1E1B4B;"></div>
+        <div class="portfolio-meta">
+          <span class="portfolio-tag">E-commerce</span>
+          <h3 class="portfolio-title">Maris Cosmetics</h3>
+          <p class="portfolio-desc">Tienda online con experiencia de producto inmersiva.</p>
+        </div>
+      </a>
+
+      <a href="#" class="portfolio-card reveal">
+        <div class="portfolio-thumb" style="--c1:#FBBF24;--c2:#04060F;"></div>
+        <div class="portfolio-meta">
+          <span class="portfolio-tag">Branding</span>
+          <h3 class="portfolio-title">Norte 47</h3>
+          <p class="portfolio-desc">Identidad y web para restaurante de cocina nórdica.</p>
+        </div>
+      </a>
+
+      <a href="#" class="portfolio-card reveal">
+        <div class="portfolio-thumb" style="--c1:#00F5D4;--c2:#0F172A;"></div>
+        <div class="portfolio-meta">
+          <span class="portfolio-tag">SaaS</span>
+          <h3 class="portfolio-title">Volta Analytics</h3>
+          <p class="portfolio-desc">Dashboard de métricas con visualizaciones a medida.</p>
+        </div>
+      </a>
+
+      <a href="#" class="portfolio-card portfolio-card-lg reveal">
+        <div class="portfolio-thumb" style="--c1:#7C3AED;--c2:#0EA5E9;"></div>
+        <div class="portfolio-meta">
+          <span class="portfolio-tag">Landing · 3D</span>
+          <h3 class="portfolio-title">Solar Forge</h3>
+          <p class="portfolio-desc">Producto físico contado con animación 3D scroll-sync.</p>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- NOSOTROS -->
+  <section id="nosotros" class="section section-nosotros">
+    <div class="nosotros-grid">
+      <div class="reveal">
+        <p class="section-eyebrow">— 04 / Nosotros</p>
+        <h2 class="section-title">Estudio pequeño,<br><span class="grad">obsesión grande.</span></h2>
+      </div>
+      <div class="nosotros-text reveal">
+        <p>Somos un estudio de diseño y desarrollo web con base en Murcia. Trabajamos con marcas que quieren destacar y no conformarse con plantillas.</p>
+        <p>Nos obsesiona la artesanía: cada animación, cada transición, cada línea de código. Construimos webs que se sienten vivas.</p>
+        <ul class="nosotros-stats">
+          <li><strong>+50</strong><span>proyectos lanzados</span></li>
+          <li><strong>5★</strong><span>satisfacción cliente</span></li>
+          <li><strong>7 días</strong><span>tiempo medio de entrega</span></li>
+        </ul>
+      </div>
+    </div>
   </section>
 
   <!-- CONTACTO -->
-  <section id="contacto">
-    <!-- Contenido aquí -->
+  <section id="contacto" class="section section-contacto">
+    <div class="contacto-grid">
+      <div class="contacto-intro reveal">
+        <p class="section-eyebrow">— 05 / Contacto</p>
+        <h2 class="section-title">¿Tienes un proyecto?<br><span class="grad">Hablemos.</span></h2>
+        <p class="section-lead">Cuéntanos tu idea. Respondemos en menos de 24 horas con una propuesta inicial sin compromiso.</p>
+
+        <ul class="contacto-info">
+          <li><span>Email</span><a href="mailto:hola@djcreate.com">hola@djcreate.com</a></li>
+          <li><span>WhatsApp</span><a href="tel:+34600000000">+34 600 000 000</a></li>
+          <li><span>Ubicación</span><p>Murcia, España</p></li>
+        </ul>
+      </div>
+
+      <form class="contacto-form reveal" id="contactForm" novalidate>
+        <div class="field">
+          <label for="name">Nombre</label>
+          <input id="name" name="name" type="text" required placeholder="¿Cómo te llamas?">
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" required placeholder="tu@email.com">
+        </div>
+        <div class="field">
+          <label for="plan">¿Qué plan te interesa?</label>
+          <select id="plan" name="plan">
+            <option>Plan Básico — 300€</option>
+            <option>Plan Avanzado — 400€</option>
+            <option>Plan 3D — 500€</option>
+            <option>Plan Tienda — desde 800€</option>
+            <option>Otro / no estoy seguro</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="message">Mensaje</label>
+          <textarea id="message" name="message" rows="4" required placeholder="Cuéntanos tu proyecto…"></textarea>
+        </div>
+        <button type="submit" class="btn-main btn-submit">Enviar mensaje</button>
+        <p class="form-feedback" id="formFeedback" aria-live="polite"></p>
+      </form>
+    </div>
   </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-top">
+      <a href="#hero" class="nav-logo" data-scroll>
+        <span class="nav-logo-mark">●</span>
+        DJ Create
+      </a>
+      <ul class="footer-links">
+        <li><a href="#servicios" data-scroll>Servicios</a></li>
+        <li><a href="#portafolio" data-scroll>Portafolio</a></li>
+        <li><a href="#nosotros" data-scroll>Nosotros</a></li>
+        <li><a href="#contacto" data-scroll>Contacto</a></li>
+      </ul>
+      <ul class="footer-social">
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">Behance</a></li>
+        <li><a href="#">LinkedIn</a></li>
+      </ul>
+    </div>
+    <div class="footer-bottom">
+      <p>© <span id="year"></span> DJ Create. Hecho con obsesión en Murcia.</p>
+      <p>
+        <a href="#">Privacidad</a> · <a href="#">Cookies</a> · <a href="#">Aviso legal</a>
+      </p>
+    </div>
+  </footer>
 
   <script src="js/frames.js"></script>
   <script src="js/main.js"></script>
