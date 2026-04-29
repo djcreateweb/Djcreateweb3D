@@ -16,7 +16,8 @@ document.querySelectorAll('a[data-scroll]').forEach(link => {
   });
 });
 
-// ── REVEAL ON SCROLL ───────────────────────────────────────
+// ── REVEAL ON SCROLL (base — solo .reveal) ─────────────────
+// Las variantes .reveal-* las gestiona el bloque cinemático abajo.
 const revealObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
@@ -57,8 +58,258 @@ if (form) {
       return;
     }
 
-    // En producción aquí iría el fetch al backend / formspree / etc.
     feedback.textContent = '¡Mensaje enviado! Responderemos en menos de 24h.';
     form.reset();
   });
 }
+
+// ════════════════════════════════════════════════════════════
+//  CINEMATIC MOTION LAYER  (Subagente 3, integrado)
+//  Vanilla — IntersectionObserver + rAF + Web Animations API
+// ════════════════════════════════════════════════════════════
+(() => {
+  const REDUCE = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+  const clamp = (v, a, b) => Math.min(Math.max(v, a), b);
+
+  // ── 1) REVEAL VARIANTS + STAGGER ────────────────────────
+  const variantSel = '.reveal-up, .reveal-fade, .reveal-blur, .reveal-scale, .reveal-clip';
+  const variantIO = new IntersectionObserver((entries, io) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add('in');
+      io.unobserve(e.target);
+    });
+  }, { threshold: 0.14, rootMargin: '0px 0px -80px 0px' });
+  $$(variantSel).forEach(el => variantIO.observe(el));
+
+  // Stagger en padres con [data-reveal-stagger]
+  const staggerIO = new IntersectionObserver((entries, io) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const parent = e.target;
+      const step = parseInt(parent.dataset.revealStagger, 10) || 100;
+      Array.from(parent.children).forEach((child, i) => {
+        child.style.setProperty('--stagger-delay', `${i * step}ms`);
+      });
+      io.unobserve(parent);
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  $$('[data-reveal-stagger]').forEach(el => staggerIO.observe(el));
+
+  // ── 2) SPLIT TEXT (palabras) ────────────────────────────
+  // Walker recursivo: tokeniza solo nodos de texto, preserva <br> y <span class="grad">
+  function splitWords(el) {
+    if (el.dataset.splitDone === '1') return;
+    const walk = (node) => {
+      const out = document.createDocumentFragment();
+      node.childNodes.forEach(child => {
+        if (child.nodeType === Node.TEXT_NODE) {
+          const tokens = child.textContent.split(/(\s+)/);
+          tokens.forEach(t => {
+            if (/^\s+$/.test(t)) {
+              out.appendChild(document.createTextNode(t));
+            } else if (t.length) {
+              const w = document.createElement('span');
+              w.className = 'tw';
+              w.textContent = t;
+              out.appendChild(w);
+            }
+          });
+        } else if (child.nodeType === Node.ELEMENT_NODE) {
+          if (child.tagName === 'BR') {
+            out.appendChild(child.cloneNode());
+            return;
+          }
+          const clone = child.cloneNode(false);
+          clone.appendChild(walk(child));
+          out.appendChild(clone);
+        }
+      });
+      return out;
+    };
+    const frag = walk(el);
+    el.innerHTML = '';
+    el.appendChild(frag);
+    $$('.tw', el).forEach((t, i) => t.style.setProperty('--i', i));
+    el.dataset.splitDone = '1';
+  }
+  $$('.split-words').forEach(splitWords);
+
+  const splitIO = new IntersectionObserver((entries, io) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add('split-in');
+      io.unobserve(e.target);
+    });
+  }, { threshold: 0.2, rootMargin: '0px 0px -40px 0px' });
+  $$('.split-words').forEach(el => splitIO.observe(el));
+
+  // ── 3) CONTADORES NUMÉRICOS ─────────────────────────────
+  function setCounterText(el, value) {
+    const prefix = el.dataset.counterPrefix || '';
+    const suffix = el.dataset.counterSuffix || '';
+    const decimals = parseInt(el.dataset.counterDecimals, 10) || 0;
+    el.textContent = prefix + value.toFixed(decimals) + suffix;
+  }
+  // Pre-fill: setea a 0 para evitar el flash del valor final al entrar al viewport.
+  $$('[data-counter]').forEach(el => {
+    if (REDUCE) return; // mantén el texto original
+    setCounterText(el, 0);
+  });
+
+  function animateCounter(el) {
+    const target = parseFloat(el.dataset.counter);
+    if (Number.isNaN(target)) return;
+    if (REDUCE) { setCounterText(el, target); return; }
+    const dur = parseInt(el.dataset.counterDuration, 10) || 1400;
+    const t0 = performance.now();
+    const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
+    function tick(now) {
+      const p = clamp((now - t0) / dur, 0, 1);
+      setCounterText(el, target * easeOutCubic(p));
+      if (p < 1) requestAnimationFrame(tick);
+      else setCounterText(el, target);
+    }
+    requestAnimationFrame(tick);
+  }
+  const counterIO = new IntersectionObserver((entries, io) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      animateCounter(e.target);
+      io.unobserve(e.target);
+    });
+  }, { threshold: 0.4 });
+  $$('[data-counter]').forEach(el => counterIO.observe(el));
+
+  // ── 4) LÍNEAS QUE SE DIBUJAN + DOTS DEL TIMELINE ────────
+  const drawIO = new IntersectionObserver((entries, io) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add('drawn');
+      const dots = $$('.timeline-dot', e.target);
+      dots.forEach((d, i) => {
+        d.style.setProperty('--dot-delay', `${600 + i * 180}ms`);
+        d.classList.add('lit');
+      });
+      io.unobserve(e.target);
+    });
+  }, { threshold: 0.3 });
+  $$('.steps--timeline, .section-title.has-rule').forEach(el => drawIO.observe(el));
+
+  // ── 5) PARALLAX LIGERO ──────────────────────────────────
+  const parallaxItems = $$('[data-parallax-speed]').map(el => ({
+    el,
+    speed: parseFloat(el.dataset.parallaxSpeed) || 0.15,
+    base: el.getBoundingClientRect().top + window.scrollY
+  }));
+  let pTicking = false;
+  function parallaxTick() {
+    pTicking = false;
+    const sy = window.scrollY;
+    const vh = window.innerHeight;
+    parallaxItems.forEach(p => {
+      const rect = p.el.getBoundingClientRect();
+      if (rect.bottom < -200 || rect.top > vh + 200) return;
+      const offset = (sy + vh / 2 - p.base) * p.speed;
+      const clamped = clamp(offset, -300, 300);
+      p.el.style.transform = `translate3d(0, calc(-50% + ${clamped}px), 0)`;
+    });
+  }
+  function onScrollParallax() {
+    if (REDUCE || !parallaxItems.length) return;
+    if (!pTicking) { requestAnimationFrame(parallaxTick); pTicking = true; }
+  }
+  if (parallaxItems.length && !REDUCE) {
+    window.addEventListener('scroll', onScrollParallax, { passive: true });
+    window.addEventListener('resize', () => {
+      parallaxItems.forEach(p => { p.base = p.el.getBoundingClientRect().top + window.scrollY; });
+    }, { passive: true });
+    parallaxTick();
+  }
+
+  // ── 6) MAGNETIC BUTTONS ─────────────────────────────────
+  const finePointer = window.matchMedia('(pointer: fine)').matches;
+  if (finePointer && !REDUCE) {
+    $$('.btn-main, .nav-cta').forEach(btn => {
+      const STRENGTH = 0.22;
+      const RADIUS = 90;
+      btn.addEventListener('pointermove', (ev) => {
+        const r = btn.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        const dx = ev.clientX - cx;
+        const dy = ev.clientY - cy;
+        const dist = Math.hypot(dx, dy);
+        if (dist > RADIUS * 1.6) return;
+        btn.style.transform = `translate3d(${dx * STRENGTH}px, ${dy * STRENGTH}px, 0)`;
+      });
+      btn.addEventListener('pointerleave', () => {
+        btn.style.transform = '';
+      });
+    });
+  }
+
+  // ── 7) TILT 3D EN PORTFOLIO ─────────────────────────────
+  if (finePointer && !REDUCE) {
+    $$('.portfolio-card:not(.portfolio-card--cta)').forEach(card => {
+      let raf = null, lastEv = null;
+      const MAX = 5; // grados
+      function apply() {
+        raf = null;
+        if (!lastEv) return;
+        const r = card.getBoundingClientRect();
+        const px = (lastEv.clientX - r.left) / r.width - 0.5;
+        const py = (lastEv.clientY - r.top) / r.height - 0.5;
+        card.style.transform =
+          `perspective(900px) rotateY(${px * MAX}deg) rotateX(${-py * MAX}deg) translateY(-4px)`;
+      }
+      card.addEventListener('pointermove', (ev) => {
+        lastEv = ev;
+        if (!raf) raf = requestAnimationFrame(apply);
+      });
+      card.addEventListener('pointerleave', () => {
+        lastEv = null;
+        card.style.transform = '';
+      });
+    });
+  }
+
+  // ── 8) SCROLL HINT FADE ─────────────────────────────────
+  const scrollHint = document.querySelector('.scroll-hint');
+  if (scrollHint) {
+    window.addEventListener('scroll', () => {
+      scrollHint.classList.toggle('hidden', window.scrollY > 80);
+    }, { passive: true });
+  }
+
+  // ── 9) FORM: HAS-VALUE STATE PARA LABEL FLOTANTE ────────
+  $$('.contacto-form .field').forEach(f => {
+    const input = f.querySelector('input, textarea, select');
+    if (!input) return;
+    const sync = () => f.classList.toggle('has-value', !!input.value && input.value !== '');
+    input.addEventListener('input', sync);
+    input.addEventListener('change', sync);
+    sync();
+  });
+
+  // ── 10) SUBMIT SUCCESS STATE ────────────────────────────
+  const formEl = document.getElementById('contactForm');
+  const submitBtn = formEl?.querySelector('.btn-submit');
+  if (formEl && submitBtn) {
+    formEl.addEventListener('submit', () => {
+      // Espera al feedback que pone el handler original (lína 41)
+      setTimeout(() => {
+        if (feedback?.classList.contains('error')) return;
+        if (feedback?.textContent?.startsWith('¡Mensaje')) {
+          submitBtn.classList.add('is-success');
+          submitBtn.disabled = true;
+          setTimeout(() => {
+            submitBtn.classList.remove('is-success');
+            submitBtn.disabled = false;
+          }, 2400);
+        }
+      }, 50);
+    });
+  }
+})();
