@@ -1,0 +1,155 @@
+/* ── VARIABLES ─────────────────────────────────────────── */
+:root {
+  --bg: #04060F;
+  --accent: #00F5D4;
+  --accent2: #7C3AED;
+  --gradient: linear-gradient(135deg, #00F5D4 0%, #7C3AED 100%);
+  --text: #EEF0FF;
+  --text-dim: #5C6480;
+  --border: rgba(255,255,255,0.06);
+}
+
+/* ── BASE ───────────────────────────────────────────────── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  overflow-x: hidden;
+}
+
+/* ── NAV ────────────────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 100; padding: 1.8rem 5rem;
+  display: flex; align-items: center; justify-content: space-between;
+  transition: all .4s;
+}
+nav.scrolled {
+  padding: 1.1rem 5rem;
+  background: rgba(4,6,15,0.85);
+  backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo {
+  font-weight: 800; font-size: 1.3rem;
+  text-decoration: none; color: var(--text);
+  letter-spacing: .06em;
+}
+.nav-links { display: flex; gap: 2.5rem; list-style: none; }
+.nav-links a {
+  text-decoration: none; color: var(--text-dim);
+  font-size: .88rem; transition: color .3s;
+}
+.nav-links a:hover { color: var(--text); }
+.nav-cta {
+  padding: .55rem 1.5rem;
+  border: 1px solid rgba(0,245,212,.45);
+  border-radius: 2rem; text-decoration: none;
+  color: var(--accent); font-size: .82rem;
+  transition: background .3s, color .3s;
+}
+.nav-cta:hover { background: var(--accent); color: var(--bg); }
+
+/* ── HERO ───────────────────────────────────────────────── */
+#hero {
+  position: relative;
+  height: 600vh; /* Alto del scroll — ajusta según frames */
+}
+#scrollCanvas {
+  position: sticky; top: 0;
+  width: 100%; height: 100vh;
+  overflow: hidden;
+}
+#frameCanvas {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+.hero-overlay {
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 100vh;
+  position: sticky;
+  display: flex; align-items: center;
+  padding: 0 5rem;
+  pointer-events: none;
+}
+.hero-content {
+  max-width: 700px;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity .8s, transform .8s;
+}
+.hero-content.visible {
+  opacity: 1; transform: translateY(0);
+}
+.hero-tag {
+  font-size: .75rem; letter-spacing: .2em;
+  text-transform: uppercase; color: var(--accent);
+  margin-bottom: 1.5rem;
+}
+.hero-title {
+  font-size: clamp(3.5rem, 7vw, 8rem);
+  font-weight: 800; line-height: .93;
+  letter-spacing: -.025em; margin-bottom: 1.5rem;
+}
+.grad {
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-sub {
+  color: var(--text-dim); font-size: 1.05rem;
+  max-width: 460px; line-height: 1.75;
+  margin-bottom: 2.5rem;
+}
+.hero-btns { display: flex; gap: 1rem; pointer-events: all; }
+
+/* ── BOTONES ────────────────────────────────────────────── */
+.btn-main {
+  padding: .9rem 2.2rem;
+  background: var(--gradient); color: var(--bg);
+  border: none; border-radius: 2rem;
+  font-size: .95rem; font-weight: 500;
+  text-decoration: none; display: inline-block;
+  transition: transform .3s, box-shadow .3s;
+}
+.btn-main:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 36px rgba(0,245,212,.28);
+}
+.btn-ghost {
+  padding: .9rem 2.2rem;
+  background: transparent; color: var(--text);
+  border: 1px solid var(--border); border-radius: 2rem;
+  font-size: .95rem; text-decoration: none;
+  display: inline-block; transition: border-color .3s;
+}
+.btn-ghost:hover { border-color: rgba(255,255,255,.22); }
+
+/* ── SCROLL HINT ────────────────────────────────────────── */
+.scroll-hint {
+  position: sticky; bottom: 2.5rem;
+  display: flex; flex-direction: column;
+  align-items: center; gap: .6rem;
+  margin-left: 50%;
+}
+.scroll-hint span {
+  font-size: .68rem; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--text-dim);
+}
+.scroll-bar {
+  width: 1px; height: 50px;
+  background: linear-gradient(to bottom, var(--accent), transparent);
+  animation: drip 1.8s ease-in-out infinite;
+}
+@keyframes drip {
+  0%   { transform: scaleY(0); transform-origin: top; }
+  49%  { transform: scaleY(1); transform-origin: top; }
+  50%  { transform: scaleY(1); transform-origin: bottom; }
+  100% { transform: scaleY(0); transform-origin: bottom; }
+}
+
+/* ── SECCIONES ──────────────────────────────────────────── */
+section { padding: 9rem 5rem; }

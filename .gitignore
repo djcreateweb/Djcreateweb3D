@@ -1,0 +1,23 @@
+# Frames extraídos del vídeo (pesados, regenerables)
+frames/
+
+# Archivos de vídeo
+*.mp4
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Editores
+.vscode/
+.idea/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+
+# Logs
+*.log
