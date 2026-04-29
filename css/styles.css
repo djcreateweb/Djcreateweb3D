@@ -323,9 +323,9 @@ h3, h4 {
   display: block;
 }
 
-/* Hero fadeout — cubre los frames finales del vídeo para evitar
-   que el texto baked-in del clip se solape con el hero-content.
-   La opacidad la controla JS según progreso de scroll. */
+/* Hero fadeout — cubre los frames finales del vídeo (frame 102+)
+   para que el texto baked-in del clip no se vea. Opaco al 100%
+   cuando alcanza opacity 1, controlado por JS desde el frame 102. */
 #heroFadeout {
   position: sticky;
   top: 0;
@@ -335,12 +335,8 @@ h3, h4 {
   z-index: 1;
   pointer-events: none;
   opacity: 0;
-  background:
-    /* Spotlight: oscurece más donde va el texto (izquierda) */
-    linear-gradient(90deg, rgba(4,6,15,.96) 0%, rgba(4,6,15,.85) 35%, rgba(4,6,15,.7) 60%, rgba(4,6,15,.55) 100%),
-    /* Refuerzo inferior */
-    linear-gradient(to bottom, transparent 0%, rgba(4,6,15,.4) 100%);
-  transition: opacity .15s linear;
+  background: var(--bg);
+  transition: opacity .12s linear;
 }
 .hero-overlay {
   position: sticky;

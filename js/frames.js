@@ -81,6 +81,16 @@ let targetFrame = 0;
 let currentFrame = 0;
 let rafId = null;
 
+// Frame en el que arranca el tapado y frame en el que ya está completo.
+// El texto baked-in del vídeo aparece a partir del frame 102, por eso
+// el overlay debe estar 100% opaco a tiempo para taparlo.
+const FADE_START_FRAME = 102;
+const FADE_END_FRAME = 110;
+const REVEAL_FRAME = 108; // cuándo aparece el hero-content
+const FADE_START_PROG = FADE_START_FRAME / (TOTAL_FRAMES - 1);
+const FADE_END_PROG   = FADE_END_FRAME / (TOTAL_FRAMES - 1);
+const REVEAL_PROG     = REVEAL_FRAME / (TOTAL_FRAMES - 1);
+
 function onScroll() {
   const scrollTop = window.scrollY;
   const heroHeight = hero.offsetHeight - window.innerHeight;
@@ -88,18 +98,16 @@ function onScroll() {
 
   targetFrame = progress * (TOTAL_FRAMES - 1);
 
-  if (progress > 0.78) {
+  if (progress > REVEAL_PROG) {
     heroContent.classList.add("visible");
   } else {
     heroContent.classList.remove("visible");
   }
 
-  // Fadeout que oculta los frames finales del vídeo (donde aparece
-  // el texto baked-in). Ramp suave entre 0.55 y 0.85.
+  // Fadeout que tapa el texto baked-in del vídeo.
+  // Empieza en el frame 102, queda totalmente opaco en el frame 110.
   if (heroFadeout) {
-    const fadeStart = 0.55;
-    const fadeEnd = 0.85;
-    const fade = Math.min(Math.max((progress - fadeStart) / (fadeEnd - fadeStart), 0), 1);
+    const fade = Math.min(Math.max((progress - FADE_START_PROG) / (FADE_END_PROG - FADE_START_PROG), 0), 1);
     heroFadeout.style.opacity = fade.toFixed(3);
   }
 
