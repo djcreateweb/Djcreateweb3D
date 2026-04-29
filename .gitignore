@@ -1,7 +1,4 @@
-# Frames extraídos del vídeo (pesados, regenerables)
-frames/
-
-# Archivos de vídeo
+# Archivos de vídeo (regenerables, fuente del cliente)
 *.mp4
 
 # Sistema operativo
