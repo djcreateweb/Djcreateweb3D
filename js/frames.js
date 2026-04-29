@@ -12,6 +12,7 @@ const hero = document.getElementById("hero");
 const heroContent = document.getElementById("heroContent");
 const heroLoader = document.getElementById("heroLoader");
 const heroProgress = document.getElementById("heroProgress");
+const heroFadeout = document.getElementById("heroFadeout");
 
 const frames = [];
 let loadedCount = 0;
@@ -87,10 +88,19 @@ function onScroll() {
 
   targetFrame = progress * (TOTAL_FRAMES - 1);
 
-  if (progress > 0.85) {
+  if (progress > 0.78) {
     heroContent.classList.add("visible");
   } else {
     heroContent.classList.remove("visible");
+  }
+
+  // Fadeout que oculta los frames finales del vídeo (donde aparece
+  // el texto baked-in). Ramp suave entre 0.55 y 0.85.
+  if (heroFadeout) {
+    const fadeStart = 0.55;
+    const fadeEnd = 0.85;
+    const fade = Math.min(Math.max((progress - fadeStart) / (fadeEnd - fadeStart), 0), 1);
+    heroFadeout.style.opacity = fade.toFixed(3);
   }
 
   if (!rafId) rafId = requestAnimationFrame(animate);

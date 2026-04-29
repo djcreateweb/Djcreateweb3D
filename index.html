@@ -34,6 +34,10 @@
       <canvas id="frameCanvas"></canvas>
     </div>
 
+    <!-- Fade-out: oculta progresivamente los frames finales del vídeo
+         para evitar que el texto baked-in se solape con el hero-content -->
+    <div id="heroFadeout" aria-hidden="true"></div>
+
     <div id="heroLoader" class="hero-loader">
       <div class="hero-loader-bar"><span id="heroProgress"></span></div>
       <p>Cargando experiencia</p>
@@ -41,15 +45,23 @@
 
     <div class="hero-overlay">
       <div class="hero-content" id="heroContent">
-        <p class="hero-tag">Agencia de diseño web · Murcia</p>
+        <span class="hero-accent" aria-hidden="true"></span>
+        <p class="hero-tag"><span class="hero-tag-mark">●</span> Agencia de diseño web · Murcia</p>
         <h1 class="hero-title">
-          Tu presencia<br>digital,<br><span class="grad">reinventada.</span>
+          Diseñamos<br>experiencias<br><span class="grad">que se recuerdan.</span>
         </h1>
-        <p class="hero-sub">Creamos experiencias web 3D e inmersivas que convierten visitantes en clientes.</p>
+        <p class="hero-sub">Webs 3D, scroll-driven y cinematográficas para marcas que no se conforman con plantillas. Murcia · al mundo.</p>
         <div class="hero-btns">
           <a href="#portafolio" class="btn-main" data-scroll>Ver proyectos</a>
           <a href="#contacto" class="btn-ghost" data-scroll>Hablemos →</a>
         </div>
+        <p class="hero-meta">
+          <span>Est. 2021</span>
+          <span class="hero-meta-sep"></span>
+          <span>+50 proyectos</span>
+          <span class="hero-meta-sep"></span>
+          <span>Murcia · ES</span>
+        </p>
       </div>
     </div>
 
@@ -331,7 +343,7 @@
           <p class="contacto-aside-lead">Respondemos en menos de 24h con propuesta inicial sin compromiso.</p>
 
           <ul class="contacto-info">
-            <li><span>Email</span><a href="mailto:hola@djcreate.com">hola@djcreate.com</a></li>
+            <li><span>Email</span><a href="mailto:djcreateweb@gmail.com">djcreateweb@gmail.com</a></li>
             <li><span>WhatsApp</span><a href="tel:+34600000000">+34 600 000 000</a></li>
             <li><span>Ubicación</span><p>Murcia, ES</p></li>
             <li><span>Horario</span><p>L–V · 9h–19h</p></li>
