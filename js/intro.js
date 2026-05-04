@@ -1,183 +1,236 @@
-/* ════════════════════════════════════════════════════════════
-   DJ CREATE — Targeting Sequence intro
-   Canvas: anillos de reticle + partículas convergentes
-   Timeline: ~5.8 s total
+﻿/* ════════════════════════════════════════════════════════════
+   DJ CREATE 3D - Pantalla de carga v4.0 (clean rewrite)
+   Canvas: targeting rings + converging particles
+   Timeline: ~9.5s total
    ════════════════════════════════════════════════════════════ */
 (function () {
   'use strict';
 
-  // ── BUILD DOM ──────────────────────────────────────────────
-  const el = document.createElement('div');
-  el.id = 'dj-intro';
-  el.innerHTML = `
-    <canvas class="ic" id="ic"></canvas>
+  // -- BUILD DOM (safe DOM methods, no innerHTML) ----------------
+  function el(tag, attrs, children) {
+    var node = document.createElement(tag);
+    if (attrs) {
+      Object.keys(attrs).forEach(function(k) {
+        if (k === 'className') { node.className = attrs[k]; }
+        else if (k === 'id')   { node.id        = attrs[k]; }
+        else                   { node.setAttribute(k, attrs[k]); }
+      });
+    }
+    if (children) {
+      children.forEach(function(c) {
+        if (typeof c === 'string') {
+          node.appendChild(document.createTextNode(c));
+        } else if (c) {
+          node.appendChild(c);
+        }
+      });
+    }
+    return node;
+  }
 
-    <div class="if">
-      <div class="ico ico--tl"><svg viewBox="0 0 52 52" fill="none"><path d="M2 32V2H32" stroke="#00F5D4" stroke-width="1.2" stroke-linecap="round"/><circle cx="2" cy="2" r="2.2" fill="#00F5D4"/></svg></div>
-      <div class="ico ico--tr"><svg viewBox="0 0 52 52" fill="none"><path d="M2 32V2H32" stroke="#00F5D4" stroke-width="1.2" stroke-linecap="round"/><circle cx="2" cy="2" r="2.2" fill="#00F5D4"/></svg></div>
-      <div class="ico ico--bl"><svg viewBox="0 0 52 52" fill="none"><path d="M2 32V2H32" stroke="#00B4FF" stroke-width="1.2" stroke-linecap="round"/><circle cx="2" cy="2" r="2.2" fill="#00B4FF"/></svg></div>
-      <div class="ico ico--br"><svg viewBox="0 0 52 52" fill="none"><path d="M2 32V2H32" stroke="#00B4FF" stroke-width="1.2" stroke-linecap="round"/><circle cx="2" cy="2" r="2.2" fill="#00B4FF"/></svg></div>
+  function svgCorner(stroke) {
+    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('viewBox', '0 0 52 52');
+    svg.setAttribute('fill', 'none');
+    var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', 'M2 32V2H32');
+    path.setAttribute('stroke', stroke);
+    path.setAttribute('stroke-width', '1.2');
+    path.setAttribute('stroke-linecap', 'round');
+    var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', '2');
+    circle.setAttribute('cy', '2');
+    circle.setAttribute('r', '2.2');
+    circle.setAttribute('fill', stroke);
+    svg.appendChild(path);
+    svg.appendChild(circle);
+    return svg;
+  }
 
-      <div class="ib ib--t">
-        <span class="itag">SYS.ACQUIRE&nbsp;·&nbsp;v2.4</span>
-        <span class="itag">37°59'N&nbsp;&nbsp;1°07'W&nbsp;·&nbsp;MURCIA</span>
-        <span class="itag itimer" id="itimer">00:000</span>
-      </div>
-      <div class="ib ib--b">
-        <span class="itag">WEB.DESIGN.3D.STUDIO</span>
-        <span class="itag">EST.2024</span>
-      </div>
+  function makeSpans(n) {
+    var result = [];
+    for (var i = 0; i < n; i++) { result.push(el('span')); }
+    return result;
+  }
 
-      <div class="itks itks--l"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-      <div class="itks itks--r"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-    </div>
+  var root = document.createElement('div');
+  root.id = 'dj-intro';
 
-    <div class="is" id="is">
-      <div class="idj-w" id="idjw"><span class="idj">DJ</span></div>
-      <div class="icr-w" id="icrw"><span class="icr">Create</span></div>
-      <div class="ishm" id="ishm"></div>
-      <div class="iln"  id="iln"></div>
-      <p  class="isub" id="isub">Agencia de diseño web 3D &nbsp;·&nbsp; Murcia</p>
-      <div class="iload" id="iload">
-        <span>Cargando experiencia</span>
-        <div class="iprog"><div class="iprog-f" id="ipf"></div></div>
-      </div>
-    </div>
+  // scan-line
+  var scanLine = el('div', { className: 'scan-line' });
+  root.appendChild(scanLine);
 
-  `;
-  document.body.prepend(el);
+  // canvas
+  var cv = el('canvas', { className: 'ic', id: 'ic' });
+  root.appendChild(cv);
+
+  // HUD frame
+  var hud = el('div', { className: 'if' });
+  var tl = el('div', { className: 'ico ico--tl' }); tl.appendChild(svgCorner('#00F5D4')); hud.appendChild(tl);
+  var tr = el('div', { className: 'ico ico--tr' }); tr.appendChild(svgCorner('#00F5D4')); hud.appendChild(tr);
+  var bl = el('div', { className: 'ico ico--bl' }); bl.appendChild(svgCorner('#3D9DFF')); hud.appendChild(bl);
+  var br = el('div', { className: 'ico ico--br' }); br.appendChild(svgCorner('#3D9DFF')); hud.appendChild(br);
+
+  var ibt = el('div', { className: 'ib ib--t' });
+  var tagA = el('span', { className: 'itag' }); tagA.textContent = 'SYS.ACQUIRE · v4.0';
+  var tagB = el('span', { className: 'itag' }); tagB.textContent = '37°59\'N  1°07\'W · MURCIA';
+  var tagT = el('span', { className: 'itag itimer', id: 'itimer' }); tagT.textContent = '00:000';
+  ibt.appendChild(tagA); ibt.appendChild(tagB); ibt.appendChild(tagT);
+
+  var ibb = el('div', { className: 'ib ib--b' });
+  var tagC = el('span', { className: 'itag' }); tagC.textContent = 'WEB.DESIGN.3D.STUDIO';
+  var tagD = el('span', { className: 'itag' }); tagD.textContent = 'EST.2024';
+  ibb.appendChild(tagC); ibb.appendChild(tagD);
+
+  var tkL = el('div', { className: 'itks itks--l' }); makeSpans(9).forEach(function(s){ tkL.appendChild(s); });
+  var tkR = el('div', { className: 'itks itks--r' }); makeSpans(9).forEach(function(s){ tkR.appendChild(s); });
+
+  hud.appendChild(ibt); hud.appendChild(ibb); hud.appendChild(tkL); hud.appendChild(tkR);
+  root.appendChild(hud);
+
+  // Central stage
+  var stage = el('div', { className: 'is', id: 'is' });
+
+  var djw  = el('div', { className: 'idj-w', id: 'idjw' });
+  var djTx = el('span', { className: 'idj' }); djTx.textContent = 'DJ';
+  djw.appendChild(djTx);
+
+  var crw  = el('div', { className: 'icr-w', id: 'icrw' });
+  var crTx = el('span', { className: 'icr' }); crTx.textContent = 'Create';
+  crw.appendChild(crTx);
+
+  var shm  = el('div', { className: 'ishm', id: 'ishm' });
+  var iln  = el('div', { className: 'iln',  id: 'iln'  });
+
+  var sub  = el('p', { className: 'isub', id: 'isub' });
+  sub.textContent = 'Agencia de diseño web 3D  ·  Murcia';
+
+  var load = el('div', { className: 'iload', id: 'iload' });
+  var loadSpan = el('span'); loadSpan.textContent = 'Cargando experiencia';
+  var prog = el('div', { className: 'iprog' });
+  var pfill = el('div', { className: 'iprog-f', id: 'ipf' });
+  prog.appendChild(pfill);
+  load.appendChild(loadSpan); load.appendChild(prog);
+
+  stage.appendChild(djw); stage.appendChild(crw); stage.appendChild(shm);
+  stage.appendChild(iln); stage.appendChild(sub); stage.appendChild(load);
+  root.appendChild(stage);
+
+  document.body.prepend(root);
   document.documentElement.classList.add('intro-active');
   document.body.classList.add('intro-active');
   window.scrollTo(0, 0);
 
-  // ── CANVAS ─────────────────────────────────────────────────
-  const cv  = document.getElementById('ic');
-  const ctx = cv.getContext('2d');
-  let W, H, CX, CY;
-  let alive  = true;
-  let rafId  = 0;
-  let sec    = 0; // running time in seconds
-  let lastTs = 0;
+  // -- CANVAS --------------------------------------------------
+  var ctx = cv.getContext('2d');
+  var W, H, CX, CY;
+  var alive     = true;
+  var rafId     = 0;
+  var sec       = 0;
+  var lastTs    = 0;
+  var ringA     = 0;
+  var lockPulse = 0;
 
-  // Controllable state
-  let ringA    = 0;   // ring opacity (0→1)
-  let lockPulse= 0;   // 0→1→0, decays
+  // Particles
+  var N_PT = 40;
+  var pts  = [];
 
-  // Particles — converge toward random inner positions
-  const N_PT = 55;
-  const pts  = [];
-
-  function initPts () {
+  function initPts() {
     pts.length = 0;
-    for (let i = 0; i < N_PT; i++) {
-      const a = Math.random() * Math.PI * 2;
-      const d = Math.random() * Math.max(W, H) * .65 + 80;
+    for (var i = 0; i < N_PT; i++) {
+      var a = Math.random() * Math.PI * 2;
+      var d = Math.random() * Math.max(W, H) * .65 + 80;
       pts.push({
-        sx: CX + Math.cos(a) * d,
-        sy: CY + Math.sin(a) * d,
-        tx: CX + (Math.random() - .5) * 320,
-        ty: CY + (Math.random() - .5) * 320,
-        r:  Math.random() * 1.4 + .4,
-        col: Math.random() > .5 ? '180,100%,65%' : '200,100%,60%', // HSL teal/blue
-        spd: Math.random() * .35 + .25,
+        sx:  CX + Math.cos(a) * d,
+        sy:  CY + Math.sin(a) * d,
+        tx:  CX + (Math.random() - .5) * 320,
+        ty:  CY + (Math.random() - .5) * 320,
+        r:   Math.random() * 1.4 + .4,
+        col: Math.random() > .5 ? '180,100%,65%' : '200,100%,60%',
+        spd: Math.random() * .24 + .18
       });
     }
   }
 
-  function resize () {
-    const dpr = window.devicePixelRatio || 1;
-    W = window.innerWidth; H = window.innerHeight;
-    CX = W / 2; CY = H / 2;
-    cv.width  = W * dpr; cv.height = H * dpr;
-    cv.style.width = W + 'px'; cv.style.height = H + 'px';
+  function resize() {
+    var dpr = window.devicePixelRatio || 1;
+    W = window.innerWidth;
+    H = window.innerHeight;
+    CX = W / 2;
+    CY = H / 2;
+    cv.width        = W * dpr;
+    cv.height       = H * dpr;
+    cv.style.width  = W + 'px';
+    cv.style.height = H + 'px';
     ctx.scale(dpr, dpr);
     initPts();
   }
 
-  function lerp (a, b, t) { return a + (b - a) * Math.min(1, Math.max(0, t)); }
-  function ease (t) { return t < .5 ? 2*t*t : -1+(4-2*t)*t; } // easeInOut
+  function lerp(a, b, t) { return a + (b - a) * Math.min(1, Math.max(0, t)); }
+  function ease(t)       { return t < .5 ? 2*t*t : -1+(4-2*t)*t; }
 
-  // ── DRAW RING ─────────────────────────────────────────────
-  function ring (r, lw, color, dash, angle) {
+  function ring(r, lw, color, dash, angle) {
     ctx.save();
     ctx.translate(CX, CY);
     ctx.rotate(angle);
     ctx.beginPath();
     ctx.arc(0, 0, r, 0, Math.PI * 2);
-    ctx.lineWidth = lw;
+    ctx.lineWidth   = lw;
     ctx.strokeStyle = color;
-    if (dash) ctx.setLineDash(dash); else ctx.setLineDash([]);
+    ctx.setLineDash(dash || []);
     ctx.stroke();
     ctx.setLineDash([]);
     ctx.restore();
   }
 
-  // ── DRAW PARTIAL ARC ──────────────────────────────────────
-  function arc (r, lw, color, startA, endA, angle) {
+  function arc(r, lw, color, startA, endA, angle) {
     ctx.save();
     ctx.translate(CX, CY);
     ctx.rotate(angle);
     ctx.beginPath();
     ctx.arc(0, 0, r, startA, endA);
-    ctx.lineWidth = lw;
+    ctx.lineWidth   = lw;
     ctx.strokeStyle = color;
     ctx.setLineDash([]);
     ctx.stroke();
     ctx.restore();
   }
 
-  // ── TICK MARKS ON OUTER RING ───────────────────────────────
-  function ticks (r, n, color, angle) {
-    ctx.save();
-    ctx.translate(CX, CY);
-    ctx.rotate(angle);
-    for (let i = 0; i < n; i++) {
-      const a = (i / n) * Math.PI * 2;
-      const isMajor = i % (n / 4) === 0;
-      const outer = r + (isMajor ? 14 : 7);
-      const inner = r - (isMajor ?  4 : 1);
-      ctx.beginPath();
-      ctx.moveTo(Math.cos(a) * inner, Math.sin(a) * inner);
-      ctx.lineTo(Math.cos(a) * outer, Math.sin(a) * outer);
-      ctx.lineWidth = isMajor ? 1.2 : .6;
-      ctx.strokeStyle = isMajor ? color : color.replace(/[\d.]+\)$/, '.4)');
-      ctx.stroke();
-    }
-    ctx.restore();
-  }
-
-  // ── MAIN FRAME ────────────────────────────────────────────
-  function frame (ts) {
+  function frame(ts) {
     if (!alive) return;
     rafId = requestAnimationFrame(frame);
-    const dt = Math.min(.05, (ts - lastTs) / 1000);
+    var dt = Math.min(.05, (ts - lastTs) / 1000);
     lastTs = ts;
-    sec += dt;
+    sec   += dt;
 
     ctx.clearRect(0, 0, W, H);
 
-    // Grid
-    const gA = 0;
+    // Grid: animates 0 -> 0.8 in first 0.6s
+    var gA = Math.min(.8, sec / .6);
     if (gA > 0) {
-      const step = 55;
+      var step = 62;
       ctx.save();
-      ctx.strokeStyle = `rgba(0,180,255,${gA * .038})`;
-      ctx.lineWidth = .5;
-      for (let x = ((CX % step) + step) % step; x < W; x += step) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
-      for (let y = ((CY % step) + step) % step; y < H; y += step) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+      ctx.strokeStyle = 'rgba(0,180,255,' + (gA * .038) + ')';
+      ctx.lineWidth   = .5;
+      for (var x = ((CX % step) + step) % step; x < W; x += step) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+      }
+      for (var y = ((CY % step) + step) % step; y < H; y += step) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+      }
       ctx.restore();
     }
 
     // Particles
-    const pAlpha = Math.min(1, sec * .9) * Math.max(0, 1 - Math.max(0, (sec - 3.2) / .9));
+    var pAlpha = Math.min(1, sec * .9) * Math.max(0, 1 - Math.max(0, (sec - 3.2) / .9));
     if (pAlpha > 0) {
-      pts.forEach(p => {
-        const prog = ease(Math.min(1, sec / 3.5) * p.spd * 1.8);
-        const px = lerp(p.sx, p.tx, prog);
-        const py = lerp(p.sy, p.ty, prog);
+      pts.forEach(function(p) {
+        var prog = ease(Math.min(1, sec / 3.8) * p.spd * 1.8);
+        var px   = lerp(p.sx, p.tx, prog);
+        var py   = lerp(p.sy, p.ty, prog);
         ctx.save();
         ctx.globalAlpha = pAlpha * .55;
-        ctx.fillStyle = `hsl(${p.col})`;
+        ctx.fillStyle   = 'hsl(' + p.col + ')';
         ctx.beginPath();
         ctx.arc(px, py, p.r, 0, Math.PI * 2);
         ctx.fill();
@@ -185,70 +238,60 @@
       });
     }
 
-    // Soft outer orbit. Keep the center clear so no line cuts the logo.
+    // Rings
     if (ringA > 0) {
-      const a = ringA;
-      const lp = lockPulse;
-      const R1 = Math.min(W, H) * .38;
+      var a  = ringA;
+      var lp = lockPulse;
+      var R1 = Math.min(W, H) * .38;
 
-      // Outer orbit only: the center stays clear for the wordmark.
-      arc(R1, .9, `rgba(0,245,212,${a * (.12 + lp * .2)})`,
-        Math.PI * .12, Math.PI * .82, sec / 32 * Math.PI * 2);
-      arc(R1 * .92, .7, `rgba(61,157,255,${a * .1})`,
+      arc(R1, .9, 'rgba(0,245,212,' + (a * (.28 + lp * .35)) + ')',
+        Math.PI * .12, Math.PI * .82,  sec / 32 * Math.PI * 2);
+      arc(R1 * .92, .7, 'rgba(61,157,255,' + (a * (.28 + lp * .35)) + ')',
         Math.PI * 1.08, Math.PI * 1.78, -(sec / 38) * Math.PI * 2);
 
-      // Glow ring outer (locked)
       if (lp > 0) {
-        ring(R1 * (1 + lp * .025), .8, `rgba(0,245,212,${lp * .18})`, null, 0);
+        ring(R1 * (1 + lp * .025), .8, 'rgba(0,245,212,' + (lp * .22) + ')', null, 0);
       }
 
-      // Mid ring — dashed, counter-rotation
+      // Mid ring -- dashed counter-rotation
+      ring(R1 * .68, .6, 'rgba(0,180,255,' + (a * .14) + ')',
+        [8, 14], -(sec / 24) * Math.PI * 2);
 
-      // Inner arc — 3/4 circle, faster
-
-      // Second inner arc — 1/4, offset
-
+      // Inner arc
+      arc(R1 * .42, .8, 'rgba(0,245,212,' + (a * .20) + ')',
+        Math.PI * .1, Math.PI * 1.65,  sec / 18 * Math.PI * 2);
     }
 
-    // Decay lock pulse
     if (lockPulse > 0) lockPulse = Math.max(0, lockPulse - dt * 2.2);
   }
 
-  const handleResize = () => { resize(); };
+  var handleResize = function() { resize(); };
   resize();
   window.addEventListener('resize', handleResize, { passive: true });
 
-  // ── ELEMENT REFS ───────────────────────────────────────────
-  const stage = document.getElementById('is');
-  const djw   = document.getElementById('idjw');
-  const crw   = document.getElementById('icrw');
-  const shm   = document.getElementById('ishm');
-  const ln    = document.getElementById('iln');
-  const sub   = document.getElementById('isub');
-  const load  = document.getElementById('iload');
-  const pfill = document.getElementById('ipf');
-  const timer = document.getElementById('itimer');
+  // Element refs
+  var timerEl = document.getElementById('itimer');
 
-  // ── TIMER ──────────────────────────────────────────────────
-  const t0 = performance.now();
-  let timerAlive = true;
-  (function tickTimer () {
+  // Timer
+  var t0 = performance.now();
+  var timerAlive = true;
+  (function tickTimer() {
     if (!timerAlive) return;
-    const ms = performance.now() - t0;
-    const s = Math.floor(ms / 1000);
-    const m = Math.floor(ms % 1000);
-    timer.textContent = `${String(s).padStart(2,'0')}:${String(m).padStart(3,'0')}`;
+    var ms = performance.now() - t0;
+    var s  = Math.floor(ms / 1000);
+    var m  = Math.floor(ms % 1000);
+    timerEl.textContent = (s < 10 ? '0' : '') + s + ':' + (m < 100 ? (m < 10 ? '00' : '0') : '') + m;
     requestAnimationFrame(tickTimer);
   })();
 
-  // ── START CANVAS LOOP ──────────────────────────────────────
-  rafId = requestAnimationFrame(ts => { lastTs = ts; requestAnimationFrame(frame); });
+  // Start canvas loop
+  rafId = requestAnimationFrame(function(ts) { lastTs = ts; requestAnimationFrame(frame); });
 
-  // ── ANIMATION HELPERS ─────────────────────────────────────
-  function fadeIn (target, from, to, duration) {
-    let v = from;
-    const step = (to - from) / (duration / 16);
-    const go = () => {
+  // Fade helper
+  function fadeIn(target, from, to, duration) {
+    var v    = from;
+    var step = (to - from) / (duration / 16);
+    var go   = function() {
       v = (to > from) ? Math.min(to, v + step) : Math.max(to, v + step);
       target.value = v;
       if (v !== to) requestAnimationFrame(go);
@@ -256,151 +299,148 @@
     requestAnimationFrame(go);
   }
 
-  // Use a proxy object so the ring fade works cleanly
-  const ringProxy = { set value(v) { ringA = v; }, get value() { return ringA; } };
+  var ringProxy = {
+    get value()  { return ringA; },
+    set value(v) { ringA = v; }
+  };
 
-  let revealPrepared = false;
-  let revealHero = null;
-  let revealNav = null;
-  let revealBeam = null;
+  // Page reveal
+  var revealPrepared = false;
+  var revealHero     = null;
+  var revealNav      = null;
+  var revealBeam     = null;
 
-  function preparePageReveal () {
+  function preparePageReveal() {
     if (revealPrepared) return;
     revealPrepared = true;
     revealHero = document.getElementById('hero');
-    revealNav = document.getElementById('nav');
+    revealNav  = document.getElementById('nav');
 
     if (revealHero) {
-      revealHero.style.opacity = '0';
-      revealHero.style.filter = 'blur(22px) brightness(.78) saturate(1.18)';
-      revealHero.style.transform = 'translateY(34px) scale(1.035)';
+      revealHero.style.opacity       = '0';
+      revealHero.style.filter        = 'blur(22px) brightness(.78) saturate(1.18)';
+      revealHero.style.transform     = 'translateY(34px) scale(1.035)';
       revealHero.style.transformOrigin = 'center top';
-      revealHero.style.transition = 'opacity 1.65s cubic-bezier(.16,1,.3,1), filter 1.65s cubic-bezier(.16,1,.3,1), transform 1.65s cubic-bezier(.16,1,.3,1)';
+      revealHero.style.transition    = 'opacity 1.65s cubic-bezier(.16,1,.3,1), filter 1.65s cubic-bezier(.16,1,.3,1), transform 1.65s cubic-bezier(.16,1,.3,1)';
     }
-
     if (revealNav) {
-      revealNav.style.opacity = '0';
-      revealNav.style.filter = 'blur(10px)';
-      revealNav.style.transform = 'translateX(-50%) translateY(-28px) scale(.985)';
+      revealNav.style.opacity    = '0';
+      revealNav.style.filter     = 'blur(10px)';
+      revealNav.style.transform  = 'translateX(-50%) translateY(-28px) scale(.985)';
       revealNav.style.transition = 'opacity 1.25s cubic-bezier(.16,1,.3,1), filter 1.25s cubic-bezier(.16,1,.3,1), transform 1.25s cubic-bezier(.16,1,.3,1)';
     }
 
     revealBeam = document.createElement('div');
     revealBeam.className = 'ireveal';
-    el.appendChild(revealBeam);
+    root.appendChild(revealBeam);
 
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      if (revealHero) {
-        revealHero.style.opacity = '1';
-        revealHero.style.filter = 'blur(0) brightness(1) saturate(1)';
-        revealHero.style.transform = 'translateY(0) scale(1)';
-      }
-      if (revealNav) {
-        revealNav.style.opacity = '1';
-        revealNav.style.filter = 'blur(0)';
-        revealNav.style.transform = 'translateX(-50%) translateY(0)';
-      }
-      if (revealBeam) revealBeam.classList.add('is-in');
-    }));
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        if (revealHero) {
+          revealHero.style.opacity   = '1';
+          revealHero.style.filter    = 'blur(0) brightness(1) saturate(1)';
+          revealHero.style.transform = 'translateY(0) scale(1)';
+        }
+        if (revealNav) {
+          revealNav.style.opacity   = '1';
+          revealNav.style.filter    = 'blur(0)';
+          revealNav.style.transform = 'translateX(-50%) translateY(0)';
+        }
+        if (revealBeam) revealBeam.classList.add('is-in');
+      });
+    });
   }
 
-  function clearPageReveal () {
+  function clearPageReveal() {
     if (revealHero) {
-      revealHero.style.transition = '';
-      revealHero.style.opacity = '';
-      revealHero.style.filter = '';
-      revealHero.style.transform = '';
+      revealHero.style.transition    = '';
+      revealHero.style.opacity       = '';
+      revealHero.style.filter        = '';
+      revealHero.style.transform     = '';
       revealHero.style.transformOrigin = '';
     }
     if (revealNav) {
       revealNav.style.transition = '';
-      revealNav.style.opacity = '';
-      revealNav.style.filter = '';
-      revealNav.style.transform = '';
+      revealNav.style.opacity    = '';
+      revealNav.style.filter     = '';
+      revealNav.style.transform  = '';
     }
     if (revealBeam) revealBeam.remove();
   }
 
-  // ── SEQUENCE ───────────────────────────────────────────────
+  // -- SEQUENCE (~9.5s total) -----------------------------------
 
-  // T+400: rings fade in over 600ms
-  setTimeout(() => { fadeIn(ringProxy, 0, 1, 900); }, 500);
+  // T+500: rings fade in (900ms)
+  setTimeout(function() { fadeIn(ringProxy, 0, 1, 900); }, 500);
 
   // T+1200: DJ slams up
-  setTimeout(() => { djw.classList.add('is-in'); }, 1450);
+  setTimeout(function() { djw.classList.add('is-in'); }, 1200);
 
-  // T+1750: CREATE sweeps from right
-  setTimeout(() => { crw.classList.add('is-in'); }, 2300);
+  // T+1900: CREATE sweeps in
+  setTimeout(function() { crw.classList.add('is-in'); }, 1900);
 
-  // T+1950: shimmer flash
-  setTimeout(() => { shm.classList.add('is-run'); }, 2850);
+  // T+2400: shimmer line
+  setTimeout(function() { shm.classList.add('is-run'); }, 2400);
 
-  // T+2150: LOCK-ON — rings pulse, stage flashes
-  setTimeout(() => {
+  // T+2750: lock-on pulse
+  setTimeout(function() {
     lockPulse = 1;
-    el.classList.add('is-lock');
-    setTimeout(() => el.classList.remove('is-lock'), 800);
-  }, 3400);
+    root.classList.add('is-lock');
+    setTimeout(function() { root.classList.remove('is-lock'); }, 700);
+  }, 2750);
 
-  // T+2350: divider line draws
-  setTimeout(() => { ln.classList.add('is-in'); }, 3750);
+  // T+3350: subtitle fades up
+  setTimeout(function() { sub.classList.add('is-in'); }, 3350);
 
-  // T+2550: sub fades up
-  setTimeout(() => { sub.classList.add('is-in'); }, 4300);
+  // T+3850: loading bar appears
+  setTimeout(function() { load.classList.add('is-in'); }, 3850);
 
-  // T+4600: centered loading line appears
-  setTimeout(() => { load.classList.add('is-in'); }, 4600);
+  // T+4150: progress bar fills (1.35s)
+  setTimeout(function() {
+    pfill.style.transition = 'width 1.35s cubic-bezier(.25,.46,.45,.94)';
+    pfill.style.width      = '100%';
+  }, 4150);
 
-  // T+3000: progress bar fills
-  setTimeout(() => {
-    pfill.style.transition = 'width 1.15s cubic-bezier(.25,.46,.45,.94)';
-    pfill.style.width = '100%';
-  }, 5000);
-
-  // T+4200: stage evaporates
-  setTimeout(() => {
+  // T+5700: stage evaporates + ring + HUD fade
+  setTimeout(function() {
     stage.style.transition = 'opacity 1s cubic-bezier(.25,.46,.45,.94), transform 1s cubic-bezier(.25,.46,.45,.94), filter 1s cubic-bezier(.25,.46,.45,.94)';
     stage.style.opacity    = '0';
     stage.style.transform  = 'translate(-50%, -50%) scale(1.035)';
     stage.style.filter     = 'blur(14px)';
-    // Fade rings out simultaneously
     fadeIn(ringProxy, ringA, 0, 1000);
-    // Fade HUD
-    el.querySelectorAll('.ib, .ico, .itks').forEach(e => {
+    root.querySelectorAll('.ib, .ico, .itks').forEach(function(e) {
       e.style.transition = 'opacity .8s ease';
       e.style.opacity    = '0';
     });
-  }, 6400);
+  }, 5700);
 
-  // T+7100: open the site with a soft cinematic reveal
-  setTimeout(() => {
-    el.classList.add('is-revealing');
-  }, 7100);
+  // T+6400: cinematic bloom
+  setTimeout(function() { root.classList.add('is-revealing'); }, 6400);
 
-  // T+8300: light flash before the page appears
-  setTimeout(() => {
-    const flash = document.createElement('div');
+  // T+7400: flash
+  setTimeout(function() {
+    var flash = document.createElement('div');
     flash.className = 'iflash';
-    el.appendChild(flash);
-    setTimeout(() => flash.remove(), 700);
-  }, 8300);
+    root.appendChild(flash);
+    setTimeout(function() { flash.remove(); }, 700);
+  }, 7400);
 
-  // T+8900: the first screen starts entering below the intro
-  setTimeout(() => { preparePageReveal(); }, 8900);
+  // T+7950: page enters below
+  setTimeout(function() { preparePageReveal(); }, 7950);
 
-  // T+9300: final wipe out
-  setTimeout(() => { el.classList.add('is-out'); }, 9300);
+  // T+8350: final wipe-out
+  setTimeout(function() { root.classList.add('is-out'); }, 8350);
 
-  // T+11000: remove the overlay and restore the page
-  setTimeout(() => {
-    alive = false;
+  // T+9800: cleanup
+  setTimeout(function() {
+    alive      = false;
     timerAlive = false;
     cancelAnimationFrame(rafId);
     window.removeEventListener('resize', handleResize);
     document.documentElement.classList.remove('intro-active');
     document.body.classList.remove('intro-active');
-    el.remove();
+    root.remove();
     setTimeout(clearPageReveal, 800);
-  }, 11000);
+  }, 9800);
 
 })();
