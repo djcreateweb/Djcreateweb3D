@@ -671,3 +671,47 @@ body.intro-active { overflow: hidden; }
     width: min(74vw, 340px);
   }
 }
+
+/* ── Reduced motion fallback ──────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  #dj-intro .ic,
+  #dj-intro .scan-line,
+  #dj-intro .iwm::before,
+  #dj-intro .ireveal,
+  #dj-intro .ishock { display: none !important; }
+
+  #dj-intro::after { animation: none; }
+
+  #dj-intro .idj-w,
+  #dj-intro .icr-w,
+  #dj-intro .idiv,
+  #dj-intro .ishm,
+  #dj-intro .isub,
+  #dj-intro .iload {
+    animation: none !important;
+    opacity: 1 !important;
+    filter: none !important;
+    clip-path: none !important;
+    transform: none !important;
+  }
+
+  #dj-intro .icr .letter {
+    animation: none !important;
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+
+  #dj-intro .idj.glitch-flash,
+  #dj-intro .icr.glitch-flash,
+  #dj-intro.is-tear,
+  #dj-intro.is-lock .is { animation: none !important; }
+
+  #dj-intro.is-out,
+  #dj-intro.fade-out {
+    animation: dji-fade-simple .35s ease forwards;
+  }
+  @keyframes dji-fade-simple {
+    to { opacity: 0; }
+  }
+}
