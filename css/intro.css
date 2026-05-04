@@ -401,6 +401,19 @@ body.intro-active { overflow: hidden; }
 #dj-intro .imsk,
 #dj-intro .ipll { display: none !important; }
 
+/* ── Anticipation tear (right before TV-off) ─────────────── */
+#dj-intro.is-tear {
+  animation: dji-tear .22s steps(2, end) 1;
+}
+@keyframes dji-tear {
+  0%   { transform: translate(0, 0); filter: hue-rotate(0deg) contrast(1); }
+  18%  { transform: translate(-6px, 0); filter: hue-rotate(-22deg) contrast(1.25) saturate(1.3); }
+  36%  { transform: translate(7px, 1px); filter: hue-rotate(18deg) contrast(1.18); }
+  54%  { transform: translate(-4px, -1px); filter: hue-rotate(-12deg) contrast(1.1); }
+  72%  { transform: translate(3px, 0); filter: hue-rotate(8deg) contrast(1.05); }
+  100% { transform: translate(0, 0); filter: hue-rotate(0deg) contrast(1); }
+}
+
 /* ── Flash overlay ────────────────────────────────────────── */
 #dj-intro .iflash {
   position: fixed;
@@ -551,8 +564,12 @@ body.intro-active { overflow: hidden; }
 }
 
 @keyframes dji-lock {
-  0%, 100% { transform: translate(-50%,-50%) scale(1); }
-  42%       { transform: translate(-50%,-50%) scale(1.022); }
+  0%   { transform: translate(-50%,-50%) scale(1); }
+  18%  { transform: translate(-50%,-50%) scale(1.055); }
+  44%  { transform: translate(-50%,-50%) scale(.984); }
+  68%  { transform: translate(-50%,-50%) scale(1.012); }
+  88%  { transform: translate(-50%,-50%) scale(.998); }
+  100% { transform: translate(-50%,-50%) scale(1); }
 }
 
 @keyframes dji-glitch {

@@ -424,6 +424,10 @@
       child.style.transform  = 'translateY(30px)';
       child.style.filter     = 'blur(5px)';
       child.style.transition = 'none';
+      if (child.classList.contains('hero-title')) {
+        child.style.clipPath       = 'inset(0 100% 0 0)';
+        child.style.webkitClipPath = 'inset(0 100% 0 0)';
+      }
     });
 
     if (revealNav) {
@@ -464,11 +468,20 @@
         // Stagger hero content children
         heroEls.forEach(function(child, i) {
           var d = (i * 130 + 80) + 'ms';
+          var isTitle = child.classList.contains('hero-title');
           child.style.transition =
             'transform 1.05s cubic-bezier(.16,1,.3,1) ' + d + ',' +
-            'filter .85s cubic-bezier(.16,1,.3,1) ' + d;
+            'filter .85s cubic-bezier(.16,1,.3,1) ' + d +
+            (isTitle
+              ? ',clip-path 1.5s cubic-bezier(.16,1,.3,1) ' + d +
+                ',-webkit-clip-path 1.5s cubic-bezier(.16,1,.3,1) ' + d
+              : '');
           child.style.transform = 'translateY(0)';
           child.style.filter    = 'blur(0)';
+          if (isTitle) {
+            child.style.clipPath       = 'inset(0 0 0 0)';
+            child.style.webkitClipPath = 'inset(0 0 0 0)';
+          }
         });
 
         if (revealBeam) revealBeam.classList.add('is-in');
@@ -487,9 +500,11 @@
     var heroContent = document.getElementById('heroContent');
     if (heroContent) {
       Array.prototype.slice.call(heroContent.children).forEach(function(child) {
-        child.style.transition = '';
-        child.style.transform  = '';
-        child.style.filter     = '';
+        child.style.transition       = '';
+        child.style.transform        = '';
+        child.style.filter           = '';
+        child.style.clipPath         = '';
+        child.style.webkitClipPath   = '';
       });
     }
     if (revealNav) {
@@ -601,6 +616,12 @@
 
   // T+7100: page enters below (overlaps with TV-off start)
   setTimeout(function() { preparePageReveal(); }, 7100);
+
+  // T+7180: anticipation glitch tear (RGB+shake)
+  setTimeout(function() {
+    root.classList.add('is-tear');
+    setTimeout(function() { root.classList.remove('is-tear'); }, 240);
+  }, 7180);
 
   // T+7350: shockwaves + TV-off wipe-out (1.15s → done at T+8500)
   setTimeout(function() {
