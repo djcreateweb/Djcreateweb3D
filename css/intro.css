@@ -1,192 +1,218 @@
 /* ═══════════════════════════════════════════════════════════
-   SITE INTRO — css/intro.css
-   Nueva animación de entrada. #brandIntro se mantiene en el
-   DOM para que main.js gestione el lock de scroll, pero se
-   oculta visualmente aquí.
+   SITE INTRO — css/intro.css  (v2)
+   #brandIntro se mantiene en DOM para el scroll-lock de
+   main.js, pero se oculta visualmente aquí.
    ═══════════════════════════════════════════════════════════ */
 
 #brandIntro { display: none !important; }
 
-/* ── overlay principal ───────────────────────────────────── */
+/* ── overlay ─────────────────────────────────────────────── */
 #siteIntro {
   position: fixed;
   inset: 0;
   z-index: 99999;
-  background: #000;
+  /* Fondo azul muy profundo con radial teal oscuro en centro */
+  background: radial-gradient(
+    ellipse 72% 68% at 50% 50%,
+    #050D1A 0%,
+    #030710 42%,
+    #010205 74%,
+    #000000 100%
+  );
   overflow: hidden;
 }
 
-/* ── cuadrícula de fondo ─────────────────────────────────── */
-.si-bg {
+/* ── cuadrícula teal 4% ──────────────────────────────────── */
+.si-grid {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(0, 245, 212, 0.028) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 245, 212, 0.028) 1px, transparent 1px);
-  background-size: 76px 76px;
+    linear-gradient(rgba(0, 245, 212, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 245, 212, 0.04) 1px, transparent 1px);
+  background-size: 72px 72px;
   pointer-events: none;
 }
 
-/* ── canvas de partículas flotantes ──────────────────────── */
-.si-particles-canvas {
+/* ── canvas de partículas ────────────────────────────────── */
+.si-canvas {
   position: absolute;
   inset: 0;
   display: block;
   width: 100%;
   height: 100%;
   pointer-events: none;
+  transition: opacity 0.9s ease;
 }
 
-/* ── escenario de texto ──────────────────────────────────── */
+.si-canvas.si--fade { opacity: 0; }
+
+/* ── escenario central ───────────────────────────────────── */
 .si-stage {
   position: absolute;
   inset: 0;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   z-index: 2;
+  gap: 0.9rem;
   pointer-events: none;
 }
 
-.si-stage.si--fadeout {
-  animation: si-stage-out 0.32s ease forwards;
+.si-stage.si--out {
+  animation: si-stage-out 0.3s ease forwards;
 }
 
 @keyframes si-stage-out {
   to { opacity: 0; }
 }
 
-/* ── wordmark ────────────────────────────────────────────── */
-.si-wordmark {
+/* ── fila de texto DJ + Create ───────────────────────────── */
+.si-text-row {
   display: flex;
   align-items: baseline;
-  gap: 0.23em;
-  font-family: 'Fraunces', Georgia, serif;
-  font-size: clamp(58px, 10.5vw, 114px);
-  font-weight: 800;
-  font-variation-settings: "opsz" 144, "SOFT" 0;
-  color: #fff;
-  letter-spacing: -0.025em;
-  line-height: 1;
-  user-select: none;
-  position: relative;
+  gap: 0.44em;
 }
 
-/* ── DJ: entra con fade + escala + desenfoque ────────────── */
+/* ── DJ: blanco puro, glow teal, reveal de abajo hacia arriba */
 .si-dj {
   display: inline-block;
-  opacity: 0;
-  transform: scale(1.3);
-  filter: blur(8px);
-  will-change: opacity, transform, filter;
-  transition:
-    opacity  0.42s cubic-bezier(0.2, 0.8, 0.2, 1),
-    transform 0.52s cubic-bezier(0.15, 0.85, 0.2, 1),
-    filter   0.4s ease;
-}
-
-.si-dj.si--visible {
-  opacity: 1;
-  transform: scale(1);
-  filter: blur(0);
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(4.5rem, 9vw, 9rem);
+  font-weight: 800;
+  color: #ffffff;
   text-shadow:
-    0 0 28px rgba(0, 245, 212, 0.42),
-    0 0 80px rgba(0, 245, 212, 0.1);
+    0 0 40px rgba(0, 245, 212, 0.72),
+    0 0 80px rgba(0, 245, 212, 0.3),
+    0 0 130px rgba(0, 245, 212, 0.1);
+  letter-spacing: -0.025em;
+  line-height: 1;
+  clip-path: inset(100% 0 0 0);
+  will-change: clip-path;
+  transition: clip-path 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ── Create: desliza desde la derecha ────────────────────── */
+.si-dj.si--show { clip-path: inset(0% 0 0 0); }
+
+/* ── Create: gradiente teal→purple, llega desde la derecha ── */
 .si-create {
   display: inline-block;
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(4.5rem, 9vw, 9rem);
+  font-weight: 800;
+  background: linear-gradient(90deg, #00F5D4 0%, #7C3AED 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  letter-spacing: -0.025em;
+  line-height: 1;
   opacity: 0;
-  transform: translateX(96px);
+  transform: translateX(90px);
   will-change: opacity, transform;
   transition:
-    opacity   0.58s cubic-bezier(0.25, 0.82, 0.2, 1),
-    transform 0.65s cubic-bezier(0.25, 0.82, 0.2, 1);
+    opacity   0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.si-create.si--visible {
+.si-create.si--show {
   opacity: 1;
   transform: translateX(0);
 }
 
-/* ── Pausa de marca: doble glow teal + purple ────────────── */
-.si-wordmark.si--glow .si-dj,
-.si-wordmark.si--glow .si-create {
-  transition:
-    text-shadow 0.45s ease,
-    opacity     0.58s cubic-bezier(0.25, 0.82, 0.2, 1),
-    transform   0.65s cubic-bezier(0.25, 0.82, 0.2, 1),
-    filter      0.4s ease;
-  text-shadow:
-    0 0 20px rgba(0, 245, 212, 0.65),
-    0 0 60px rgba(0, 245, 212, 0.28),
-    0 0 10px rgba(124, 58, 237, 0.55),
-    0 0 52px rgba(124, 58, 237, 0.2);
-}
-
-/* ── Destello teal de izquierda a derecha ────────────────── */
+/* ── destello de luz teal (simultáneo con Create) ─────────── */
 .si-shimmer {
   position: absolute;
   top: 0;
   left: 0;
   bottom: 0;
-  width: 70px;
+  width: 80px;
   background: linear-gradient(
     90deg,
-    transparent                     0%,
-    rgba(0, 245, 212, 0.08)        22%,
-    rgba(0, 245, 212, 0.78)        44%,
-    rgba(255, 255, 255, 0.62)      50%,
-    rgba(0, 245, 212, 0.78)        56%,
-    rgba(0, 245, 212, 0.08)        78%,
-    transparent                   100%
+    transparent                    0%,
+    rgba(0, 245, 212, 0.05)       22%,
+    rgba(0, 245, 212, 0.70)       44%,
+    rgba(255, 255, 255, 0.52)     50%,
+    rgba(124, 58, 237, 0.70)      56%,
+    rgba(124, 58, 237, 0.05)      78%,
+    transparent                  100%
   );
   filter: blur(3px);
   opacity: 0;
   pointer-events: none;
-  will-change: transform, opacity;
   transform: translateX(-100px);
+  will-change: transform, opacity;
 }
 
 .si-shimmer.si--sweep {
-  animation: si-shimmer 0.38s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: si-shimmer-run 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
-@keyframes si-shimmer {
+@keyframes si-shimmer-run {
   0%   { transform: translateX(-100px); opacity: 1; }
-  72%  { opacity: 1; }
+  68%  { opacity: 1; }
   100% { transform: translateX(calc(100vw + 100px)); opacity: 0; }
 }
 
-/* ── Máscara cinemática: píldora → pantalla completa ─────── */
+/* ── línea gradiente 1px — reveal de izquierda a derecha ─── */
+.si-line-wrap {
+  width: min(600px, 80vw);
+}
+
+.si-line {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, #00F5D4 0%, #7C3AED 100%);
+  transform-origin: left center;
+  transform: scaleX(0);
+  will-change: transform;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.si-line.si--show { transform: scaleX(1); }
+
+/* ── subtexto ────────────────────────────────────────────── */
+.si-sub {
+  margin: 0;
+  font-family: 'Geist', sans-serif;
+  font-size: clamp(0.58rem, 1.05vw, 0.7rem);
+  font-weight: 400;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: rgba(0, 245, 212, 0.52);
+  opacity: 0;
+  will-change: opacity;
+  transition: opacity 0.4s ease;
+}
+
+.si-sub.si--show { opacity: 1; }
+
+/* ── máscara: pill alargada → pantalla completa ───────────── */
 .si-mask-layer {
   position: absolute;
   inset: 0;
   background-image: url('../frames/frame_0000.jpg');
   background-size: cover;
   background-position: center center;
-  /* píldora alargada centrada en pantalla */
+  /* píldora alargada centrada: 44vw × 10vh con radius 100px */
   clip-path: inset(45vh 28vw 45vh 28vw round 100px);
   opacity: 0;
   z-index: 1;
   will-change: clip-path, opacity;
   transition:
-    clip-path 0.82s cubic-bezier(0.4, 0, 0.2, 1),
-    opacity   0.22s ease;
+    clip-path 0.9s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity   0.2s ease;
 }
 
-.si-mask-layer.si--appear {
-  opacity: 1;
-}
+.si-mask-layer.si--appear { opacity: 1; }
 
 .si-mask-layer.si--expand {
   clip-path: inset(0 0 0 0 round 0px);
 }
 
-/* ── Fade de salida del overlay completo ─────────────────── */
+/* ── fade-out del overlay completo ───────────────────────── */
 #siteIntro.si--outro {
-  animation: si-outro 0.52s ease forwards;
+  animation: si-outro 0.45s ease forwards;
   pointer-events: none;
 }
 

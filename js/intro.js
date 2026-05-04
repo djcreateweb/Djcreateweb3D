@@ -1,22 +1,36 @@
 /* ═══════════════════════════════════════════════════════════
-   SITE INTRO — js/intro.js
-   Se ejecuta siempre al cargar. z-index 99999 tapa todo el
-   contenido. Secuencia de 8 fases, ~4.4 s en total.
+   SITE INTRO — js/intro.js  (v2)
+   Se ejecuta siempre al cargar. Espera a que Syne 800 esté
+   disponible (máx. 800 ms) antes de arrancar la secuencia.
+
+   Timing:
+     T+0 ms   fondo + partículas                  (0.3 s)
+     T+300    DJ clip-path reveal bottom→top       (0.5 s)
+     T+800    Create slide from right + shimmer    (0.6 s)
+     T+1400   línea gradiente reveal left→right    (0.5 s)
+     T+1900   subtexto fade-in                     (0.4 s)
+     T+2300   pausa con todo visible               (0.8 s)
+     T+3100   stage fade-out                       (0.3 s)
+     T+3400   máscara appear                       (0.2 s)
+     T+3600   máscara expand                       (0.9 s)
+     T+4500   overlay outro + nav desde arriba     (0.45 s)
+     T+5050   cleanup
    ═══════════════════════════════════════════════════════════ */
 (function siteIntro() {
   'use strict';
 
-  const intro    = document.getElementById('siteIntro');
+  const intro   = document.getElementById('siteIntro');
   if (!intro) return;
 
-  const dj       = intro.querySelector('.si-dj');
-  const create   = intro.querySelector('.si-create');
-  const wordmark = intro.querySelector('.si-wordmark');
-  const shimmer  = intro.querySelector('.si-shimmer');
-  const stage    = intro.querySelector('.si-stage');
-  const mask     = intro.querySelector('.si-mask-layer');
-  const canvas   = intro.querySelector('.si-particles-canvas');
-  const nav      = document.getElementById('nav');
+  const dj      = intro.querySelector('.si-dj');
+  const create  = intro.querySelector('.si-create');
+  const shimmer = intro.querySelector('.si-shimmer');
+  const stage   = intro.querySelector('.si-stage');
+  const line    = intro.querySelector('.si-line');
+  const sub     = intro.querySelector('.si-sub');
+  const mask    = intro.querySelector('.si-mask-layer');
+  const canvas  = intro.querySelector('.si-canvas');
+  const nav     = document.getElementById('nav');
 
   /* ── ocultar nav hasta que la intro complete ─────────── */
   if (nav) {
@@ -26,39 +40,41 @@
   }
 
   /* ══════════════════════════════════════════════════════
-     SISTEMA DE PARTÍCULAS
+     PARTÍCULAS  —  teal (#00F5D4) y púrpura (#7C3AED)
+     1-3px de diámetro, flotando lentamente hacia arriba
   ══════════════════════════════════════════════════════ */
   const ctx = canvas.getContext('2d');
-  let W = 0, H = 0, particles = [], rafId = 0;
+  let W = 0, H = 0, particles = [], rafId = 0, running = true;
 
   function initParticles() {
     W = canvas.width  = window.innerWidth;
     H = canvas.height = window.innerHeight;
-    particles = Array.from({ length: 52 }, () => ({
+    particles = Array.from({ length: 55 }, () => ({
       x:    Math.random() * W,
       y:    Math.random() * H,
-      vx:   (Math.random() - 0.5) * 0.2,
-      vy:   -(Math.random() * 0.36 + 0.06),
-      r:    Math.random() * 1.4 + 0.6,
-      a:    Math.random() * 0.09 + 0.04,
-      teal: Math.random() > 0.52,
+      vx:   (Math.random() - 0.5) * 0.18,
+      vy:   -(Math.random() * 0.32 + 0.05),
+      r:    Math.random() * 1.0 + 0.5,    // 0.5–1.5px radio → 1–3px Ø
+      a:    Math.random() * 0.09 + 0.03,  // 3–12% opacidad
+      teal: Math.random() > 0.45,         // ~55% teal, ~45% purple
     }));
   }
 
   function tickParticles() {
+    if (!running) return;
     ctx.clearRect(0, 0, W, H);
     for (const p of particles) {
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
       ctx.fillStyle = p.teal
         ? `rgba(0,245,212,${p.a})`
-        : `rgba(255,255,255,${(p.a * 0.6).toFixed(3)})`;
+        : `rgba(124,58,237,${p.a})`;
       ctx.fill();
       p.x += p.vx;
       p.y += p.vy;
-      if (p.y < -4) { p.y = H + 4; p.x = Math.random() * W; }
-      if (p.x < -4) p.x = W + 4;
-      if (p.x > W + 4) p.x = -4;
+      if (p.y < -4)    { p.y = H + 4; p.x = Math.random() * W; }
+      if (p.x < -4)      p.x = W + 4;
+      if (p.x > W + 4)   p.x = -4;
     }
     rafId = requestAnimationFrame(tickParticles);
   }
@@ -69,86 +85,90 @@
 
   /* ══════════════════════════════════════════════════════
      SECUENCIA DE ANIMACIÓN
-     T=0   pantalla negra + cuadrícula + partículas  (0.5 s)
-     T=500 DJ entra: fade + escala 1.3→1 + deblur    (0.5 s)
-     T=1050 Create desliza desde derecha              (0.65 s)
-     T=1680 destello teal recorre el texto de izq→der (0.38 s)
-     T=1750 glow teal+purple pausa de marca           (0.6 s)
-     T=2350 texto hace fade-out                       (0.32 s)
-     T=2700 aparece máscara rectangul-píldora         (0.22 s)
-     T=2930 máscara se expande a pantalla completa    (0.82 s)
-     T=3820 fade-out overlay + nav desliza desde arriba
   ══════════════════════════════════════════════════════ */
+  let seqStarted = false;
 
-  // Fase 2 — DJ entra
-  setTimeout(() => {
-    dj.classList.add('si--visible');
-  }, 500);
+  function startSequence() {
+    if (seqStarted) return;
+    seqStarted = true;
 
-  // Fase 3 — Create desliza desde la derecha
-  setTimeout(() => {
-    create.classList.add('si--visible');
-  }, 1050);
+    /* Fase 1 — fondo + partículas ya visibles (0.3 s de espera) */
 
-  // Destello teal cuando Create llega a su posición
-  setTimeout(() => {
-    shimmer.classList.add('si--sweep');
-  }, 1680);
+    /* Fase 2 — DJ: clip-path reveal de abajo hacia arriba */
+    setTimeout(() => dj.classList.add('si--show'), 300);
 
-  // Fase 4 — Pausa con glow teal + purple
-  setTimeout(() => {
-    wordmark.classList.add('si--glow');
-  }, 1750);
+    /* Fase 3 — Create desliza desde la derecha + destello de luz */
+    setTimeout(() => {
+      create.classList.add('si--show');
+      // Shimmer arranca ~60 ms después de que Create empieza a moverse
+      setTimeout(() => shimmer.classList.add('si--sweep'), 60);
+    }, 800);
 
-  // Fase 5 — Texto desaparece
-  setTimeout(() => {
-    stage.classList.add('si--fadeout');
-  }, 2350);
+    /* Fase 4 — Línea gradiente: reveal de izquierda a derecha */
+    setTimeout(() => line.classList.add('si--show'), 1400);
 
-  // Fase 6 — Aparece la máscara rectangular
-  setTimeout(() => {
-    mask.classList.add('si--appear');
-  }, 2700);
+    /* Fase 5 — Subtexto: fade-in */
+    setTimeout(() => sub.classList.add('si--show'), 1900);
 
-  // Fase 7 — La máscara se expande hasta llenar pantalla
-  setTimeout(() => {
-    mask.classList.add('si--expand');
-  }, 2930);
+    /* Pausa 0.8 s — todo visible */
 
-  // Fase 8 — Fade-out del overlay y entrada de la nav
-  setTimeout(() => {
-    intro.classList.add('si--outro');
+    /* Fase 6 — Stage fade-out */
+    setTimeout(() => stage.classList.add('si--out'), 3100);
 
-    // Liberar scroll (main.js también lo libera ~T+4 s)
-    document.documentElement.style.overflow = '';
-    document.body.style.overflow = '';
+    /* Fase 7a — Máscara aparece (opacity 0→1 en 0.2 s) */
+    setTimeout(() => {
+      mask.classList.add('si--appear');
+      canvas.classList.add('si--fade');   // partículas desaparecen
+    }, 3400);
 
-    // Nav desliza desde arriba mientras el overlay desaparece
-    if (nav) {
-      nav.style.transition =
-        'opacity 0.66s ease, transform 0.7s cubic-bezier(0.2, 0.82, 0.2, 1)';
-      // Doble RAF para garantizar que el navegador registra
-      // el estado inicial antes de lanzar la transición
-      requestAnimationFrame(() => {
+    /* Fase 7b — Máscara se expande (0.2 s después del appear) */
+    setTimeout(() => mask.classList.add('si--expand'), 3600);
+
+    /* Fase 8 — Overlay fade-out + nav entra desde arriba */
+    setTimeout(() => {
+      intro.classList.add('si--outro');
+
+      // Liberar scroll (main.js también lo restaura ~T+4 s)
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+
+      if (nav) {
+        nav.style.transition =
+          'opacity 0.45s ease, transform 0.48s cubic-bezier(0.2,0.82,0.2,1)';
+        // Doble RAF: asegura que el navegador registra el estado
+        // inicial (opacity 0 / translateY(-32px)) antes de la transición
         requestAnimationFrame(() => {
-          nav.style.opacity   = '1';
-          nav.style.transform = 'translateX(-50%) translateY(0)';
+          requestAnimationFrame(() => {
+            nav.style.opacity   = '1';
+            nav.style.transform = 'translateX(-50%) translateY(0)';
+          });
         });
-      });
+        // Limpiar inline styles una vez que la transición ha terminado
+        setTimeout(() => {
+          nav.style.transition = '';
+          nav.style.opacity    = '';
+          nav.style.transform  = '';
+        }, 600);
+      }
+    }, 4500);
 
-      // Limpiar estilos inline una vez finalizada la transición
-      setTimeout(() => {
-        nav.style.transition = '';
-        nav.style.opacity    = '';
-        nav.style.transform  = '';
-      }, 850);
-    }
-  }, 3820);
+    /* Cleanup — eliminar el overlay del DOM */
+    setTimeout(() => {
+      running = false;
+      cancelAnimationFrame(rafId);
+      window.removeEventListener('resize', initParticles);
+      if (intro.parentNode) intro.parentNode.removeChild(intro);
+    }, 5050);
+  }
 
-  // Eliminar el overlay del DOM
-  setTimeout(() => {
-    cancelAnimationFrame(rafId);
-    window.removeEventListener('resize', initParticles);
-    if (intro.parentNode) intro.parentNode.removeChild(intro);
-  }, 4420);
+  /* Esperar a que la fuente Syne 800 esté disponible.
+     Si tarda más de 800 ms se inicia con la fuente fallback. */
+  let fontReady = false;
+  const onFontReady = () => {
+    if (fontReady) return;
+    fontReady = true;
+    startSequence();
+  };
+  document.fonts.load('800 1em Syne').then(onFontReady).catch(onFontReady);
+  setTimeout(onFontReady, 800);
 })();
