@@ -139,7 +139,21 @@ if (form) {
       return;
     }
 
-    feedback.textContent = '¡Mensaje enviado! Responderemos en menos de 24h.';
+    const plan    = (form.plan?.value || 'No especificado').trim();
+    const subject = encodeURIComponent('Consulta web — ' + plan);
+    const body    = encodeURIComponent(
+      'Hola, me llamo ' + name + ' y os escribo desde djcreate.es.\n\n' +
+      'Plan de interés: ' + plan + '\n\n' +
+      'Mensaje:\n' + message + '\n\n' +
+      'Email de contacto: ' + email
+    );
+    const gmailUrl = 'https://mail.google.com/mail/?view=cm&fs=1' +
+                     '&to=djcreateweb%40gmail.com' +
+                     '&su=' + subject +
+                     '&body=' + body;
+    window.open(gmailUrl, '_blank', 'noopener');
+
+    feedback.textContent = '¡Abriendo Gmail! Revisa la ventana que acaba de abrirse.';
     form.reset();
   });
 }
