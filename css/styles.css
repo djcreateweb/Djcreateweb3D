@@ -2540,13 +2540,15 @@ button:focus-visible {
 .section-eyebrow {
   transition-delay: .05s;
 }
-.section-head.in .section-lead,
-.section-head.in .section-eyebrow {
+/* Reveal en cualquier wrapper .reveal (.section-head, .nosotros-aside,
+   .contacto-form, etc.) — antes solo cubria .section-head.in */
+.reveal.in .section-lead,
+.reveal.in .section-eyebrow {
   opacity: 1;
   transform: translateY(0);
 }
 
-/* Hero eyebrow: siempre visible (no usa el sistema .section-head.in) */
+/* Hero eyebrow: siempre visible (no usa el sistema .reveal.in) */
 #hero .section-eyebrow {
   opacity: 1;
   transform: translateY(0);
