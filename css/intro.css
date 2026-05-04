@@ -206,17 +206,9 @@ body.intro-active { overflow: hidden; }
   animation: dji-dj-in 1.2s cubic-bezier(.16,1,.3,1) forwards;
 }
 
-/* ── Create wrapper ───────────────────────────────────────── */
+/* ── Create wrapper — letters animate individually ────────── */
 #dj-intro .icr-w {
-  overflow: hidden;
-  opacity: 0;
-  filter: blur(20px);
-  clip-path: inset(0 100% 0 0);
-  transform: translateY(32px) scale(.97);
-  will-change: transform, opacity, filter, clip-path;
-}
-#dj-intro .icr-w.is-in {
-  animation: dji-create-in 1.35s cubic-bezier(.16,1,.3,1) forwards;
+  overflow: visible;
 }
 
 /* ── DJ text ──────────────────────────────────────────────── */
@@ -224,18 +216,18 @@ body.intro-active { overflow: hidden; }
   display: block;
   font-family: "Syne", system-ui, sans-serif;
   font-weight: 800;
-  font-size: clamp(4.6rem,9vw,9.4rem);
+  font-size: clamp(5rem,10.2vw,10.5rem);
   letter-spacing: -.04em;
   line-height: .80;
-  background: linear-gradient(110deg, #FFFFFF 0%, #C8FFF6 26%, #00F5D4 60%, #5AD5FF 100%);
+  background: linear-gradient(115deg, #FFFFFF 0%, #E0FFFD 14%, #00F5D4 44%, #00C4FF 72%, #7C3AED 100%);
   -webkit-background-clip: text;
           background-clip: text;
   -webkit-text-fill-color: transparent;
   filter:
-    drop-shadow(-2px 0 rgba(255,50,120,.15))
-    drop-shadow(2px 0 rgba(0,200,255,.15))
-    drop-shadow(0 0 30px rgba(0,245,212,.3))
-    drop-shadow(0 18px 40px rgba(0,0,0,.32));
+    drop-shadow(-4px 0 rgba(255,50,120,.32))
+    drop-shadow(4px 0 rgba(0,200,255,.32))
+    drop-shadow(0 0 52px rgba(0,245,212,.60))
+    drop-shadow(0 22px 52px rgba(0,0,0,.46));
 }
 
 /* ── Create text ──────────────────────────────────────────── */
@@ -244,19 +236,33 @@ body.intro-active { overflow: hidden; }
   font-family: "Fraunces", Georgia, serif;
   font-weight: 560;
   font-style: italic;
-  font-variation-settings: "opsz" 144, "SOFT" 48, "WONK" 1;
-  font-size: clamp(5rem,10.2vw,10.6rem);
-  letter-spacing: -.08em;
+  font-variation-settings: "opsz" 144, "SOFT" 100, "WONK" 1;
+  font-size: clamp(5.2rem,10.8vw,11.4rem);
+  letter-spacing: 0;
   line-height: .80;
-  background: linear-gradient(112deg, #F0FFFF 0%, #54FFE5 35%, #00B8F5 70%, #B6A0FF 100%);
+  background: linear-gradient(115deg, #FFFFFF 0%, #C0FFF8 18%, #00F5D4 40%, #3D9DFF 62%, #A855F7 82%, #6D28D9 100%);
   -webkit-background-clip: text;
           background-clip: text;
   -webkit-text-fill-color: transparent;
   filter:
-    drop-shadow(-1px 0 rgba(200,0,255,.12))
-    drop-shadow(2px 0 rgba(0,245,212,.14))
-    drop-shadow(0 22px 44px rgba(0,0,0,.3))
-    drop-shadow(0 0 24px rgba(0,245,212,.16));
+    drop-shadow(-3px 0 rgba(220,0,255,.30))
+    drop-shadow(3px 0 rgba(0,245,212,.26))
+    drop-shadow(0 26px 56px rgba(0,0,0,.44))
+    drop-shadow(0 0 38px rgba(0,245,212,.30));
+}
+
+/* ── Per-letter cascade for Create ───────────────────────── */
+#dj-intro .icr .letter {
+  display: inline-block;
+  margin-right: -.08em;
+  opacity: 0;
+  transform: translateY(54px) perspective(500px) rotateX(-50deg) scale(.86);
+  filter: blur(14px);
+  will-change: transform, opacity, filter;
+}
+#dj-intro .icr .letter:last-child { margin-right: 0; }
+#dj-intro .icr .letter.is-in {
+  animation: dji-letter-in .88s cubic-bezier(.16,1,.3,1) forwards;
 }
 
 /* ── Glitch flash on wordmark entry ──────────────────────── */
@@ -415,7 +421,7 @@ body.intro-active { overflow: hidden; }
 /* ── Exit ─────────────────────────────────────────────────── */
 #dj-intro.is-out,
 #dj-intro.fade-out {
-  animation: dji-exit 1.55s cubic-bezier(.76,0,.18,1) forwards;
+  animation: dji-exit 1.15s cubic-bezier(.4,0,.6,1) forwards;
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -463,15 +469,17 @@ body.intro-active { overflow: hidden; }
 }
 
 @keyframes dji-dj-in {
-  0%   { opacity: 0; filter: blur(18px); clip-path: inset(0 0 100% 0); transform: translateY(28px) scale(.94); }
-  68%  { opacity: 1; filter: blur(0);    clip-path: inset(0 0 0 0);    transform: translateY(-2px) scale(1.016); }
-  100% { opacity: 1; filter: blur(0);    clip-path: inset(0 0 0 0);    transform: translateY(0) scale(1); }
+  0%   { opacity: 0; filter: blur(22px) brightness(2.2);   clip-path: inset(0 0 100% 0); transform: translateY(36px) scale(.90); }
+  52%  { opacity: 1; filter: blur(0)    brightness(1.24);  clip-path: inset(0 0 0 0);    transform: translateY(-7px) scale(1.028); }
+  72%  {             filter: blur(0)    brightness(1.06);                                 transform: translateY(1px)  scale(.999); }
+  100% { opacity: 1; filter: blur(0)    brightness(1);     clip-path: inset(0 0 0 0);    transform: translateY(0) scale(1); }
 }
 
-@keyframes dji-create-in {
-  0%   { opacity: 0; filter: blur(20px); clip-path: inset(0 100% 0 0); transform: translateY(32px) scale(.97); }
-  74%  { opacity: 1; filter: blur(0);    clip-path: inset(0 0 0 0);    transform: translateY(-4px) scale(1.012); }
-  100% { opacity: 1; filter: blur(0);    clip-path: inset(0 0 0 0);    transform: translateY(0) scale(1); }
+@keyframes dji-letter-in {
+  0%   { opacity: 0; transform: translateY(54px) perspective(500px) rotateX(-50deg) scale(.86); filter: blur(14px); }
+  52%  { opacity: 1; transform: translateY(-8px) perspective(500px) rotateX(6deg)   scale(1.02); filter: blur(0); }
+  76%  {             transform: translateY(2px)  perspective(500px) rotateX(-2deg)  scale(.999); }
+  100% { opacity: 1; transform: translateY(0)    perspective(500px) rotateX(0deg)   scale(1);    filter: blur(0); }
 }
 
 @keyframes dji-shimmer {
@@ -486,14 +494,14 @@ body.intro-active { overflow: hidden; }
 }
 
 @keyframes dji-glitch {
-  0%   { transform: translate(-5px, 1px)   skewX(-3deg); opacity: .88; }
-  14%  { transform: translate(4px, -1px)   skewX(2deg);  opacity: 1;   }
-  28%  { transform: translate(-3px, 2px)   skewX(-1.5deg); opacity: .85; }
-  42%  { transform: translate(5px, 0)      skewX(3deg);  opacity: 1;   }
-  57%  { transform: translate(-2px, -1px)  skewX(-2deg); opacity: .92; }
-  71%  { transform: translate(2px, 1px)    skewX(1deg);  opacity: .95; }
-  85%  { transform: translate(-1px, 0)     skewX(0);     opacity: 1;   }
-  100% { transform: translate(0, 0)        skewX(0);     opacity: 1;   }
+  0%   { transform: translate(-8px, 2px)   skewX(-5.5deg); opacity: .75; }
+  12%  { transform: translate(6px, -1.5px) skewX(4deg);    opacity: 1;   }
+  24%  { transform: translate(-5px, 3px)   skewX(-3.5deg); opacity: .72; }
+  38%  { transform: translate(9px, 0)      skewX(5.5deg);  opacity: 1;   }
+  52%  { transform: translate(-3px, -2px)  skewX(-3deg);   opacity: .86; }
+  65%  { transform: translate(4px, 1.5px)  skewX(2.5deg);  opacity: .97; }
+  80%  { transform: translate(-2px, 0)     skewX(-1deg);   opacity: 1;   }
+  100% { transform: translate(0, 0)        skewX(0);       opacity: 1;   }
 }
 
 @keyframes dji-flash {
@@ -525,25 +533,12 @@ body.intro-active { overflow: hidden; }
 }
 
 @keyframes dji-exit {
-  0% {
-    opacity: 1;
-    filter: blur(0) saturate(1) brightness(1);
-    transform: translateY(0);
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-  }
-  40% {
-    opacity: .97;
-    filter: blur(7px) saturate(1.2) brightness(1.08);
-    transform: translateY(-2vh);
-    clip-path: polygon(0 0, 100% 0, 100% 88%, 0 100%);
-  }
-  100% {
-    opacity: 0;
-    filter: blur(22px) saturate(1.35) brightness(1.18);
-    transform: translateY(-7vh);
-    clip-path: polygon(0 0, 100% 0, 100% 0, 0 16%);
-    pointer-events: none;
-  }
+  0%   { clip-path: inset(0 0 0 0);             opacity: 1;   filter: brightness(1)   saturate(1)   blur(0);    }
+  14%  { clip-path: inset(0 0 0 0);             opacity: 1;   filter: brightness(6)   saturate(.05) blur(.5px); }
+  42%  { clip-path: inset(45% 0 45% 0);         opacity: 1;   filter: brightness(3.5) saturate(.02) blur(3px);  }
+  68%  { clip-path: inset(49% 4% 49% 4%);       opacity: .92; filter: brightness(2.2) saturate(0)   blur(7px);  }
+  86%  { clip-path: inset(49.8% 14% 49.8% 14%); opacity: .52; filter: brightness(1.3) saturate(0)   blur(11px); }
+  100% { clip-path: inset(50% 28% 50% 28%);     opacity: 0;   filter: brightness(.3)  saturate(0)   blur(15px); pointer-events: none; }
 }
 
 /* ── Mobile ───────────────────────────────────────────────── */
@@ -569,11 +564,14 @@ body.intro-active { overflow: hidden; }
     height: clamp(2rem, 12vw, 3.5rem);
   }
   #dj-intro .idj {
-    font-size: clamp(4rem,22vw,6.2rem);
+    font-size: clamp(4.2rem,22vw,6.5rem);
     line-height: .82;
   }
   #dj-intro .icr {
-    font-size: clamp(4.7rem,21vw,7.2rem);
+    font-size: clamp(4.9rem,21.5vw,7.5rem);
+  }
+  #dj-intro .icr .letter {
+    margin-right: -.07em;
   }
   #dj-intro .isub {
     margin-top: 1.2rem;

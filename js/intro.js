@@ -98,7 +98,13 @@
   var idiv = el('span', { className: 'idiv' });
 
   var crw  = el('div', { className: 'icr-w', id: 'icrw' });
-  var crTx = el('span', { className: 'icr' }); crTx.textContent = 'Create';
+  var crTx = el('span', { className: 'icr' });
+  'Create'.split('').forEach(function(ch, i) {
+    var lt = el('span', { className: 'letter' });
+    if (i < 5) { lt.style.marginRight = '-.08em'; }
+    lt.appendChild(document.createTextNode(ch));
+    crTx.appendChild(lt);
+  });
   crw.appendChild(crTx);
 
   var shm  = el('div', { className: 'ishm', id: 'ishm' });
@@ -401,18 +407,30 @@
     revealHero = document.getElementById('hero');
     revealNav  = document.getElementById('nav');
 
+    var heroContent = document.getElementById('heroContent');
+    var heroEls = heroContent ? Array.prototype.slice.call(heroContent.children) : [];
+
+    // Hero section: fade + blur + scale (covers canvas too)
     if (revealHero) {
       revealHero.style.opacity         = '0';
-      revealHero.style.filter          = 'blur(22px) brightness(.78) saturate(1.18)';
-      revealHero.style.transform       = 'translateY(34px) scale(1.035)';
+      revealHero.style.filter          = 'blur(20px) brightness(.82) saturate(1.15)';
+      revealHero.style.transform       = 'translateY(28px) scale(1.028)';
       revealHero.style.transformOrigin = 'center top';
-      revealHero.style.transition      = 'opacity 1.65s cubic-bezier(.16,1,.3,1), filter 1.65s cubic-bezier(.16,1,.3,1), transform 1.65s cubic-bezier(.16,1,.3,1)';
+      revealHero.style.transition      = 'none';
     }
+
+    // Hero content children: translateY stagger (opacity from parent)
+    heroEls.forEach(function(child) {
+      child.style.transform  = 'translateY(30px)';
+      child.style.filter     = 'blur(5px)';
+      child.style.transition = 'none';
+    });
+
     if (revealNav) {
       revealNav.style.opacity    = '0';
       revealNav.style.filter     = 'blur(10px)';
       revealNav.style.transform  = 'translateX(-50%) translateY(-28px) scale(.985)';
-      revealNav.style.transition = 'opacity 1.25s cubic-bezier(.16,1,.3,1), filter 1.25s cubic-bezier(.16,1,.3,1), transform 1.25s cubic-bezier(.16,1,.3,1)';
+      revealNav.style.transition = 'none';
     }
 
     revealBeam = document.createElement('div');
@@ -421,16 +439,38 @@
 
     requestAnimationFrame(function() {
       requestAnimationFrame(function() {
+        // Hero section reveal
         if (revealHero) {
+          revealHero.style.transition =
+            'opacity 1.6s cubic-bezier(.16,1,.3,1),' +
+            'filter 1.6s cubic-bezier(.16,1,.3,1),' +
+            'transform 1.6s cubic-bezier(.16,1,.3,1)';
           revealHero.style.opacity   = '1';
           revealHero.style.filter    = 'blur(0) brightness(1) saturate(1)';
           revealHero.style.transform = 'translateY(0) scale(1)';
         }
+
+        // Nav reveal
         if (revealNav) {
+          revealNav.style.transition =
+            'opacity 1.1s cubic-bezier(.16,1,.3,1) .12s,' +
+            'filter 1.1s cubic-bezier(.16,1,.3,1) .12s,' +
+            'transform 1.1s cubic-bezier(.16,1,.3,1) .12s';
           revealNav.style.opacity   = '1';
           revealNav.style.filter    = 'blur(0)';
           revealNav.style.transform = 'translateX(-50%) translateY(0)';
         }
+
+        // Stagger hero content children
+        heroEls.forEach(function(child, i) {
+          var d = (i * 130 + 80) + 'ms';
+          child.style.transition =
+            'transform 1.05s cubic-bezier(.16,1,.3,1) ' + d + ',' +
+            'filter .85s cubic-bezier(.16,1,.3,1) ' + d;
+          child.style.transform = 'translateY(0)';
+          child.style.filter    = 'blur(0)';
+        });
+
         if (revealBeam) revealBeam.classList.add('is-in');
       });
     });
@@ -443,6 +483,14 @@
       revealHero.style.filter          = '';
       revealHero.style.transform       = '';
       revealHero.style.transformOrigin = '';
+    }
+    var heroContent = document.getElementById('heroContent');
+    if (heroContent) {
+      Array.prototype.slice.call(heroContent.children).forEach(function(child) {
+        child.style.transition = '';
+        child.style.transform  = '';
+        child.style.filter     = '';
+      });
     }
     if (revealNav) {
       revealNav.style.transition = '';
@@ -470,10 +518,13 @@
     setTimeout(function() { djTx.classList.remove('glitch-flash'); }, 360);
   }, 1400);
 
-  // T+1900: Create sweeps in + divider appears
+  // T+1900: Create letters cascade in + divider appears
   setTimeout(function() {
     crw.classList.add('is-in');
     idiv.classList.add('is-in');
+    crTx.querySelectorAll('.letter').forEach(function(lt, i) {
+      setTimeout(function() { lt.classList.add('is-in'); }, i * 72);
+    });
   }, 1900);
 
   // T+2100: glitch flash on Create (200ms into its entry)
@@ -546,13 +597,13 @@
     setTimeout(function() { flash.remove(); }, 700);
   }, 7000);
 
-  // T+7550: page enters below
-  setTimeout(function() { preparePageReveal(); }, 7550);
+  // T+7100: page enters below (overlaps with TV-off start)
+  setTimeout(function() { preparePageReveal(); }, 7100);
 
-  // T+7950: final wipe-out
-  setTimeout(function() { root.classList.add('is-out'); }, 7950);
+  // T+7350: TV-off wipe-out (1.15s → done at T+8500)
+  setTimeout(function() { root.classList.add('is-out'); }, 7350);
 
-  // T+9400: cleanup
+  // T+8700: cleanup
   setTimeout(function() {
     alive      = false;
     timerAlive = false;
@@ -561,7 +612,7 @@
     document.documentElement.classList.remove('intro-active');
     document.body.classList.remove('intro-active');
     root.remove();
-    setTimeout(clearPageReveal, 800);
-  }, 9400);
+    setTimeout(clearPageReveal, 600);
+  }, 8700);
 
 })();
