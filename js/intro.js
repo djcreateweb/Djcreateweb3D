@@ -536,11 +536,13 @@
   // T+2400: shimmer line
   setTimeout(function() { shm.classList.add('is-run'); }, 2400);
 
-  // T+2750: lock-on pulse
+  // T+2750: lock-on pulse + wordmark light scan
   setTimeout(function() {
     lockPulse = 1;
     root.classList.add('is-lock');
+    wmw.classList.add('is-scan');
     setTimeout(function() { root.classList.remove('is-lock'); }, 700);
+    setTimeout(function() { wmw.classList.remove('is-scan'); }, 1400);
   }, 2750);
 
   // T+3350: subtitle typewriter
@@ -600,8 +602,17 @@
   // T+7100: page enters below (overlaps with TV-off start)
   setTimeout(function() { preparePageReveal(); }, 7100);
 
-  // T+7350: TV-off wipe-out (1.15s → done at T+8500)
-  setTimeout(function() { root.classList.add('is-out'); }, 7350);
+  // T+7350: shockwaves + TV-off wipe-out (1.15s → done at T+8500)
+  setTimeout(function() {
+    var shock1 = document.createElement('div');
+    shock1.className = 'ishock';
+    root.appendChild(shock1);
+    var shock2 = document.createElement('div');
+    shock2.className = 'ishock ishock--late';
+    root.appendChild(shock2);
+    setTimeout(function() { shock1.remove(); shock2.remove(); }, 1500);
+    root.classList.add('is-out');
+  }, 7350);
 
   // T+8700: cleanup
   setTimeout(function() {
