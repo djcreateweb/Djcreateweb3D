@@ -533,20 +533,17 @@
     setTimeout(function() { djTx.classList.remove('glitch-flash'); }, 360);
   }, 1400);
 
-  // T+1900: Create letters cascade in + divider appears
+  // T+1900: Create sweeps in + divider appears
   setTimeout(function() {
     crw.classList.add('is-in');
     idiv.classList.add('is-in');
-    crTx.querySelectorAll('.letter').forEach(function(lt, i) {
-      setTimeout(function() { lt.classList.add('is-in'); }, i * 72);
-    });
   }, 1900);
 
-  // T+2100: glitch flash on Create (200ms into its entry)
+  // T+3100: glitch flash on Create (una vez visible)
   setTimeout(function() {
     crTx.classList.add('glitch-flash');
     setTimeout(function() { crTx.classList.remove('glitch-flash'); }, 360);
-  }, 2100);
+  }, 3100);
 
   // T+2400: shimmer line
   setTimeout(function() { shm.classList.add('is-run'); }, 2400);
@@ -614,8 +611,8 @@
     setTimeout(function() { flash.remove(); }, 700);
   }, 7000);
 
-  // T+7100: page enters below (overlaps with TV-off start)
-  setTimeout(function() { preparePageReveal(); }, 7100);
+  // T+6900: page starts fading in antes del slide-up (250ms de margen)
+  setTimeout(function() { preparePageReveal(); }, 6900);
 
   // T+7180: anticipation glitch tear (RGB+shake)
   setTimeout(function() {
