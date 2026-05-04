@@ -8,6 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=Geist+Mono:wght@400;500;600&family=Geist:wght@300;400;500;600;700&family=Syne:wght@800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/cursor.css">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/intro.css">
 </head>
@@ -23,31 +25,6 @@
       </linearGradient>
     </defs>
   </svg>
-
-  <div class="light-cursor" aria-hidden="true">
-    <span class="light-cursor__aura"></span>
-    <span class="light-cursor__halo"></span>
-    <span class="light-cursor__ring"></span>
-    <span class="light-cursor__core"></span>
-    <span class="light-cursor__ray light-cursor__ray--x"></span>
-    <span class="light-cursor__ray light-cursor__ray--y"></span>
-  </div>
-
-  <!-- SITE INTRO -->
-  <div id="siteIntro" role="presentation" aria-hidden="true">
-    <div class="si-grid"></div>
-    <canvas class="si-canvas"></canvas>
-    <div class="si-stage">
-      <div class="si-shimmer"></div>
-      <div class="si-text-row">
-        <span class="si-dj">DJ</span>
-        <span class="si-create">Create</span>
-      </div>
-      <div class="si-line-wrap"><div class="si-line"></div></div>
-      <p class="si-sub">Agencia de diseño web&thinsp;&middot;&thinsp;Murcia</p>
-    </div>
-    <div class="si-mask-layer"></div>
-  </div>
 
   <!-- BRAND INTRO -->
   <div id="brandIntro" class="brand-intro" role="presentation" aria-hidden="true">
@@ -163,7 +140,6 @@
       <svg class="shc" viewBox="0 0 28 28" aria-hidden="true">
         <circle class="shc-ring" cx="14" cy="14" r="13"/>
         <circle class="shc-ring shc-ring--dashed" cx="14" cy="14" r="8"/>
-        <line class="shc-scan" x1="3" y1="14" x2="25" y2="14"/>
         <line class="shc-tick shc-tick--n" x1="14" y1="0" x2="14" y2="3"/>
         <line class="shc-tick shc-tick--s" x1="14" y1="25" x2="14" y2="28"/>
         <line class="shc-tick shc-tick--e" x1="25" y1="14" x2="28" y2="14"/>
@@ -292,55 +268,14 @@
     </div>
   </section>
 
-  <!-- DIVIDER servicios → proceso -->
-  <div class="section-divider divider-tech" aria-hidden="true"><span>02 — proceso</span></div>
-
-  <!-- PROCESO · tier-1 · timeline horizontal -->
-  <section id="proceso" class="section section--tier-1 section-proceso">
-    <div class="section-inner section-inner--wide">
-      <div class="section-head reveal">
-        <p class="section-eyebrow"><span>02 / Proceso</span></p>
-        <h2 class="section-title split-words has-rule">Cómo trabajamos<br><span class="grad">de la idea al directo.</span></h2>
-        <p class="section-lead">Un proceso claro, rápido y sin sorpresas. Cuatro fases para llevar tu proyecto del brief al lanzamiento.</p>
-      </div>
-
-      <ol class="steps steps--timeline" data-reveal-stagger="160">
-        <li class="step reveal-up">
-          <span class="timeline-dot" aria-hidden="true"></span>
-          <span class="step-num">01</span>
-          <h3 class="step-title">Descubrimiento</h3>
-          <p class="step-desc">Te escuchamos. Definimos objetivos, público y referencias para entender tu proyecto a fondo.</p>
-        </li>
-        <li class="step reveal-up">
-          <span class="timeline-dot" aria-hidden="true"></span>
-          <span class="step-num">02</span>
-          <h3 class="step-title">Diseño</h3>
-          <p class="step-desc">Wireframes y mockups de alta fidelidad. Iteramos contigo hasta que cada pixel encaja.</p>
-        </li>
-        <li class="step reveal-up">
-          <span class="timeline-dot" aria-hidden="true"></span>
-          <span class="step-num">03</span>
-          <h3 class="step-title">Desarrollo</h3>
-          <p class="step-desc">Código limpio, animaciones a medida y pruebas en cada navegador. Nada de plantillas.</p>
-        </li>
-        <li class="step reveal-up">
-          <span class="timeline-dot" aria-hidden="true"></span>
-          <span class="step-num">04</span>
-          <h3 class="step-title">Lanzamiento</h3>
-          <p class="step-desc">Despliegue, SEO técnico, formación y soporte. Tu web vuela el primer día.</p>
-        </li>
-      </ol>
-    </div>
-  </section>
-
-  <!-- DIVIDER proceso → portafolio -->
+  <!-- DIVIDER servicios → portafolio -->
   <div class="section-divider divider-scanline" aria-hidden="true"><span class="divider-dot"></span></div>
 
   <!-- PORTAFOLIO · tier-2 · editorial full-bleed -->
   <section id="portafolio" class="section section--tier-2 section-portafolio">
     <div class="section-inner section-inner--bleed">
       <div class="section-head reveal">
-        <p class="section-eyebrow"><span>03 / Portafolio</span></p>
+        <p class="section-eyebrow"><span>02 / Portafolio</span></p>
         <h2 class="section-title split-words has-rule">Trabajos<br><span class="grad">recientes.</span></h2>
         <p class="section-lead">Una selección de proyectos donde diseño y código se encuentran.</p>
       </div>
@@ -428,7 +363,7 @@
   </section>
 
   <!-- DIVIDER portafolio → nosotros -->
-  <div class="section-divider divider-tech" aria-hidden="true"><span>04 — estudio</span></div>
+  <div class="section-divider divider-tech" aria-hidden="true"><span>03 — estudio</span></div>
 
   <!-- NOSOTROS · tier-1 · split editorial + 47 gigante -->
   <section id="nosotros" class="section section--tier-1 section-nosotros">
@@ -438,7 +373,7 @@
       <div class="nosotros-grid">
         <aside class="nosotros-aside reveal">
           <div class="nosotros-aside-inner">
-            <p class="section-eyebrow"><span>04 / Nosotros</span></p>
+            <p class="section-eyebrow"><span>03 / Nosotros</span></p>
             <h2 class="section-title split-words has-rule">Estudio<br>pequeño,<br><span class="grad">obsesión<br>grande.</span></h2>
             <p class="nosotros-meta">DJ Create<br>Murcia, ES</p>
           </div>
@@ -468,7 +403,7 @@
       <div class="contacto-grid contacto-grid--asym">
         <form class="contacto-form reveal" id="contactForm" novalidate>
           <header class="contacto-form-head">
-            <p class="section-eyebrow"><span>05 / Contacto</span></p>
+            <p class="section-eyebrow"><span>04 / Contacto</span></p>
             <h2 class="section-title split-words has-rule">¿Tienes un proyecto?<br><span class="grad">Hablemos.</span></h2>
           </header>
 
@@ -617,5 +552,6 @@
   <script src="js/frames.js"></script>
   <script src="js/main.js"></script>
   <script src="js/cookies.js"></script>
+  <script src="js/cursor.js"></script>
 </body>
 </html>

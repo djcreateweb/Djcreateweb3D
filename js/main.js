@@ -1,3 +1,84 @@
+// ── RESET SCROLL EN CADA RECARGA ───────────────────────────
+// La intro arranca SIEMPRE desde arriba, sin importar dónde estuviese
+// el usuario antes de pulsar F5.
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+window.scrollTo(0, 0);
+
+// ── BRAND INTRO — film-slate cinematic open ────────────────
+// Solo activo si el elemento es visible (intro.css lo oculta cuando
+// #dj-intro es el sistema activo, para evitar doble pantalla de carga).
+(function brandIntro() {
+  const intro = document.getElementById('brandIntro');
+  if (!intro) return;
+  if (getComputedStyle(intro).display === 'none') return;
+
+  // Bloquear scroll mientras la intro está visible (evita que la rueda
+  // o el touch desplacen la página por debajo del overlay)
+  const htmlEl = document.documentElement;
+  const prevHtmlOverflow = htmlEl.style.overflow;
+  const prevBodyOverflow = document.body.style.overflow;
+  htmlEl.style.overflow = 'hidden';
+  document.body.style.overflow = 'hidden';
+
+  const timeEl = document.getElementById('brandIntroTime');
+  const start = performance.now();
+  let raf = 0;
+  const FPS = 24;
+  const fmt = (ms) => {
+    const total = Math.max(0, ms);
+    const sec = Math.floor(total / 1000);
+    const ff = Math.floor((total % 1000) / (1000 / FPS));
+    return `00:${String(sec).padStart(2, '0')}:${String(ff).padStart(2, '0')}`;
+  };
+  const tick = () => {
+    if (timeEl) timeEl.textContent = fmt(performance.now() - start);
+    raf = requestAnimationFrame(tick);
+  };
+  tick();
+
+  const MIN_DURATION = 1400;   // tiempo mínimo antes de revelar marca + banner
+  const READY_HOLD   = 2500;   // tiempo para ver el banner antes del fade-out
+  const HARD_EXIT    = 4700;   // salida forzada si algún recurso tarda demasiado
+  const statusEl = document.getElementById('biStatus');
+  let heroReady = false;
+  let readied = false;
+  let exited = false;
+
+  function ready() {
+    if (readied || exited) return;
+    readied = true;
+    intro.classList.add('brand-intro--ready');
+    if (statusEl) statusEl.textContent = 'Experiencia lista';
+    setTimeout(exit, READY_HOLD);
+  }
+
+  function exit() {
+    if (exited) return;
+    exited = true;
+    cancelAnimationFrame(raf);
+    intro.classList.add('brand-intro--exiting');
+    setTimeout(() => {
+      intro.classList.add('brand-intro--done');
+      htmlEl.style.overflow = prevHtmlOverflow;
+      document.body.style.overflow = prevBodyOverflow;
+      window.scrollTo(0, 0);
+    }, 620);
+  }
+
+  function maybeReady() {
+    const elapsed = performance.now() - start;
+    if (heroReady && elapsed >= MIN_DURATION) ready();
+  }
+
+  window.addEventListener('hero:firstframe', () => {
+    heroReady = true;
+    maybeReady();
+  }, { once: true });
+
+  setTimeout(maybeReady, MIN_DURATION);
+  setTimeout(exit, HARD_EXIT);
+})();
+
 // ── NAV SCROLLED STATE ─────────────────────────────────────
 const nav = document.getElementById("nav");
 window.addEventListener("scroll", () => {
@@ -230,6 +311,82 @@ if (form) {
 
   // ── 6) MAGNETIC BUTTONS ─────────────────────────────────
   const finePointer = window.matchMedia('(pointer: fine)').matches;
+
+  // Custom light cursor: puntero luminoso para toda la experiencia.
+  const lightCursor = document.querySelector('.light-cursor');
+  if (lightCursor && finePointer) {
+    let cursorRaf = null;
+    let targetX = window.innerWidth / 2;
+    let targetY = window.innerHeight / 2;
+    let cursorX = targetX;
+    let cursorY = targetY;
+    let prevX = cursorX;
+    let prevY = cursorY;
+    let cursorOn = false;
+    const interactiveSel = 'a, button, select, summary, [role="button"], input[type="checkbox"], input[type="radio"], label, .portfolio-card, .plan-row__cta';
+    const textSel = 'input:not([type="checkbox"]):not([type="radio"]), textarea, [contenteditable="true"]';
+    const trails = Array.from({ length: REDUCE ? 0 : 7 }, (_, i) => {
+      const t = document.createElement('span');
+      t.className = 'light-trail';
+      t.style.setProperty('--trail-size', `${12 - i}px`);
+      t.style.setProperty('--trail-opacity', `${Math.max(.08, .28 - i * .03)}`);
+      document.body.appendChild(t);
+      return { el: t, x: cursorX, y: cursorY };
+    });
+
+    function paintCursor() {
+      cursorX += (targetX - cursorX) * 0.34;
+      cursorY += (targetY - cursorY) * 0.34;
+      const vx = cursorX - prevX;
+      const vy = cursorY - prevY;
+      prevX = cursorX;
+      prevY = cursorY;
+
+      lightCursor.style.setProperty('--cursor-x', `${cursorX}px`);
+      lightCursor.style.setProperty('--cursor-y', `${cursorY}px`);
+      lightCursor.style.setProperty('--cursor-tilt-x', `${Math.max(-10, Math.min(10, vx * .9))}px`);
+      lightCursor.style.setProperty('--cursor-tilt-y', `${Math.max(-10, Math.min(10, vy * .9))}px`);
+
+      trails.forEach((t, i) => {
+        const pull = 0.18 - i * 0.012;
+        t.x += (cursorX - t.x) * pull;
+        t.y += (cursorY - t.y) * pull;
+        t.el.style.transform = `translate3d(${t.x}px, ${t.y}px, 0) translate(-50%, -50%)`;
+      });
+
+      if (cursorOn && (Math.abs(targetX - cursorX) > .1 || Math.abs(targetY - cursorY) > .1)) {
+        cursorRaf = requestAnimationFrame(paintCursor);
+      } else {
+        cursorRaf = null;
+      }
+    }
+
+    function hideCursor() {
+      cursorOn = false;
+      lightCursor.classList.remove('is-visible', 'is-pressing', 'is-interactive', 'is-text');
+      trails.forEach(t => t.el.classList.remove('is-visible'));
+    }
+
+    window.addEventListener('pointermove', (ev) => {
+      targetX = ev.clientX;
+      targetY = ev.clientY;
+      const target = ev.target;
+      cursorOn = true;
+      lightCursor.classList.add('is-visible');
+      trails.forEach(t => t.el.classList.add('is-visible'));
+      lightCursor.classList.toggle('is-interactive', !!target.closest(interactiveSel));
+      lightCursor.classList.toggle('is-text', !!target.closest(textSel));
+      if (!cursorRaf) cursorRaf = requestAnimationFrame(paintCursor);
+    }, { passive: true });
+
+    window.addEventListener('pointerdown', () => {
+      lightCursor.classList.add('is-pressing');
+    }, { passive: true });
+    window.addEventListener('pointerup', () => {
+      lightCursor.classList.remove('is-pressing');
+    }, { passive: true });
+    document.addEventListener('pointerleave', hideCursor);
+  }
   if (finePointer && !REDUCE) {
     $$('.btn-main, .nav-cta').forEach(btn => {
       const STRENGTH = 0.22;
@@ -275,12 +432,60 @@ if (form) {
     });
   }
 
-  // ── 8) SCROLL HINT FADE ─────────────────────────────────
+  // ── 8) SCROLL HINT — fade + cursor follow ───────────────
   const scrollHint = document.querySelector('.scroll-hint');
+  const heroSec = document.getElementById('hero');
   if (scrollHint) {
     window.addEventListener('scroll', () => {
       scrollHint.classList.toggle('hidden', window.scrollY > 80);
     }, { passive: true });
+  }
+  // Cursor follow — solo en hero, con puntero fino y sin reduce-motion
+  // El reticle (.shc) queda anclado al cursor; "Scroll" + drip caen debajo.
+  if (scrollHint && heroSec && finePointer && !REDUCE) {
+    const RETICLE_HALF = 14;       // mitad del SVG (28px)
+    const LERP = 0.22;             // follow rápido pero suave
+    const TX_TPL = (x, y) => `translate3d(${x}px, ${y}px, 0) translate(-50%, -${RETICLE_HALF}px)`;
+
+    let tx = 0, ty = 0, cx = 0, cy = 0;
+    let following = false;
+    let rafFollow = null;
+
+    function followTick() {
+      cx += (tx - cx) * LERP;
+      cy += (ty - cy) * LERP;
+      scrollHint.style.transform = TX_TPL(cx, cy);
+      if (following && (Math.abs(tx - cx) > 0.3 || Math.abs(ty - cy) > 0.3)) {
+        rafFollow = requestAnimationFrame(followTick);
+      } else {
+        rafFollow = null;
+      }
+    }
+
+    function activate(ev) {
+      following = true;
+      scrollHint.classList.add('scroll-hint--following');
+      cx = ev.clientX; cy = ev.clientY;
+      tx = cx; ty = cy;
+      scrollHint.style.transform = TX_TPL(cx, cy);
+    }
+
+    // Activamos con pointermove (más fiable que pointerenter cuando el mouse
+    // ya estaba sobre el hero al desaparecer la intro).
+    heroSec.addEventListener('pointermove', (ev) => {
+      if (!following) {
+        activate(ev);
+        return;
+      }
+      tx = ev.clientX;
+      ty = ev.clientY;
+      if (!rafFollow) rafFollow = requestAnimationFrame(followTick);
+    });
+    heroSec.addEventListener('pointerleave', () => {
+      following = false;
+      scrollHint.classList.remove('scroll-hint--following');
+      scrollHint.style.transform = '';
+    });
   }
 
   // ── 9) FORM: HAS-VALUE STATE PARA LABEL FLOTANTE ────────
@@ -293,7 +498,23 @@ if (form) {
     sync();
   });
 
-  // ── 10) SUBMIT SUCCESS STATE ────────────────────────────
+  // ── 10) PORTFOLIO VIDEOS — play/pause según viewport ────
+  const portfolioVideos = $$('.portfolio-card video');
+  if (portfolioVideos.length) {
+    const videoIO = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        const v = e.target;
+        if (e.isIntersecting && e.intersectionRatio > 0.25) {
+          v.play().catch(() => {});
+        } else {
+          v.pause();
+        }
+      });
+    }, { threshold: [0, 0.25, 0.5, 0.75] });
+    portfolioVideos.forEach(v => videoIO.observe(v));
+  }
+
+  // ── 11) SUBMIT SUCCESS STATE ────────────────────────────
   const formEl = document.getElementById('contactForm');
   const submitBtn = formEl?.querySelector('.btn-submit');
   if (formEl && submitBtn) {

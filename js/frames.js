@@ -1,5 +1,5 @@
 // ── CONFIGURACIÓN ─────────────────────────────────────────
-const TOTAL_FRAMES = 121;        // Frames extraídos por extract_frames.py (1 de cada 2)
+const TOTAL_FRAMES = 114;        // Frames 0000–0113 — los frames 114–120 no se usan
 const FRAMES_PATH = "frames/";   // Ruta a la carpeta de frames (relativa a index.html)
 const FRAME_PREFIX = "frame_";   // Prefijo del nombre de cada frame
 const FRAME_EXT = ".jpg";        // Extensión de los frames
@@ -39,6 +39,7 @@ function preloadFrames() {
         resizeCanvas();
         drawFrame(0);
         firstFrameDrawn = true;
+        window.dispatchEvent(new CustomEvent('hero:firstframe'));
       }
 
       if (loadedCount === TOTAL_FRAMES && heroLoader) {

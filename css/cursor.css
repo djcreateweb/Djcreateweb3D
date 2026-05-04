@@ -1,0 +1,54 @@
+html, body, *, a, button { cursor: none !important; }
+
+/* ── Punto neón único ─────────────────────────────────────── */
+#c-dot {
+  position: fixed;
+  width: 9px;
+  height: 9px;
+  background: #ffffff;
+  border-radius: 50%;
+  /* Anillo de contacto + tubo neón + halo exterior */
+  box-shadow:
+    0 0  0  1.5px rgba(0, 245, 212, 1),
+    0 0 10px      rgba(0, 245, 212, 1),
+    0 0 22px      rgba(0, 245, 212, 0.75),
+    0 0 50px      rgba(0, 245, 212, 0.30);
+  pointer-events: none;
+  z-index: 99999;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  will-change: left, top;
+}
+
+/* ── Canvas de la estela neón ─────────────────────────────── */
+#c-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 99997;
+}
+
+/* ── Spotlight de apartado ────────────────────────────────── */
+#c-spotlight {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 99996;
+  opacity: 0;
+  background: radial-gradient(
+    680px circle at var(--cx, -9999px) var(--cy, -9999px),
+    rgba(0, 245, 212, 0.07)  0%,
+    rgba(0, 180, 255, 0.025) 35%,
+    transparent              60%
+  );
+  transition: opacity 0.5s ease;
+}
+#c-spotlight.on { opacity: 1; }
+
+/* ── Destello de sección activa ───────────────────────────── */
+section.c-active {
+  transition: box-shadow 0.4s ease;
+  box-shadow: inset 0 0 140px rgba(0, 245, 212, 0.045);
+}
