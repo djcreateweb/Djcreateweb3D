@@ -9,13 +9,106 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=Geist+Mono:wght@400;500;600&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/intro.css">
 </head>
 <body>
+
+  <!-- Gradient defs — separados del intro para que sigan activos en nav/footer -->
+  <svg width="0" height="0" style="position:absolute;pointer-events:none" aria-hidden="true">
+    <defs>
+      <linearGradient id="djc-grad" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#00F5D4"/>
+        <stop offset="55%" stop-color="#3D9DFF"/>
+        <stop offset="100%" stop-color="#7C3AED"/>
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <div class="light-cursor" aria-hidden="true">
+    <span class="light-cursor__aura"></span>
+    <span class="light-cursor__halo"></span>
+    <span class="light-cursor__ring"></span>
+    <span class="light-cursor__core"></span>
+    <span class="light-cursor__ray light-cursor__ray--x"></span>
+    <span class="light-cursor__ray light-cursor__ray--y"></span>
+  </div>
+
+  <!-- SITE INTRO -->
+  <div id="siteIntro" role="presentation" aria-hidden="true">
+    <div class="si-bg"></div>
+    <canvas class="si-particles-canvas"></canvas>
+    <div class="si-stage">
+      <div class="si-wordmark">
+        <span class="si-dj">DJ</span>
+        <span class="si-create">Create</span>
+      </div>
+      <div class="si-shimmer"></div>
+    </div>
+    <div class="si-mask-layer"></div>
+  </div>
+
+  <!-- BRAND INTRO -->
+  <div id="brandIntro" class="brand-intro" role="presentation" aria-hidden="true">
+    <div class="bi-pattern" aria-hidden="true">
+      <span class="bi-line bi-line--a"></span>
+      <span class="bi-line bi-line--b"></span>
+      <span class="bi-line bi-line--c"></span>
+    </div>
+
+    <!-- Marco decorativo con esquinas y HUD bars -->
+    <div class="bi-frame">
+      <span class="bi-c bi-c--tl"></span>
+      <span class="bi-c bi-c--tr"></span>
+      <span class="bi-c bi-c--bl"></span>
+      <span class="bi-c bi-c--br"></span>
+
+      <header class="bi-hud bi-hud--top">
+        <span class="bi-rec"><span class="bi-rec-dot"></span>REC</span>
+        <span class="bi-slate">DJ–CREATE · TAKE 01 · SCENE 47</span>
+        <span class="bi-time" id="brandIntroTime">00:00:00</span>
+      </header>
+
+      <footer class="bi-hud bi-hud--bot">
+        <span class="bi-sig">● ○ ●</span>
+        <span class="bi-bars" aria-hidden="true">
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        </span>
+        <span class="bi-sig">DJCREATE.ES</span>
+      </footer>
+    </div>
+
+    <!-- Contenido centrado -->
+    <div class="bi-stage">
+      <svg class="bi-mark" viewBox="0 0 200 200" aria-hidden="true">
+        <circle class="bi-ring" cx="100" cy="100" r="84"></circle>
+        <circle class="bi-ring bi-ring--inner" cx="100" cy="100" r="64"></circle>
+        <line class="bi-scan" x1="16" y1="100" x2="184" y2="100"></line>
+        <text class="bi-mono" x="100" y="116" text-anchor="middle">DJ</text>
+      </svg>
+
+      <h1 class="bi-wordmark" aria-label="DJ Create">
+        <span class="bi-pre"><span>D</span><span>J</span></span><span class="bi-post"><span>&nbsp;</span><span>C</span><span>r</span><span>e</span><span>a</span><span>t</span><span>e</span></span>
+      </h1>
+
+      <figure class="bi-banner" aria-hidden="true">
+        <!-- Cambia esta ruta por la imagen horizontal/banner definitiva -->
+        <img src="frames/frame_0108.jpg" alt="">
+      </figure>
+
+      <p class="bi-status" id="biStatus" aria-live="polite">Preparando experiencia</p>
+    </div>
+
+    <!-- Barra de progreso al fondo -->
+    <div class="bi-bar" aria-hidden="true"><i></i></div>
+  </div>
 
   <!-- NAV FLOTANTE -->
   <nav id="nav" class="nav-pill">
     <a href="#hero" class="nav-logo" data-scroll>
-      <span class="nav-logo-mark">●</span>
+      <svg class="nav-logo-mark" viewBox="0 0 22 22" aria-hidden="true">
+        <circle cx="11" cy="11" r="8.5" fill="none" stroke="url(#djc-grad)" stroke-width="1.5"/>
+        <circle cx="11" cy="11" r="2.6" fill="url(#djc-grad)"/>
+      </svg>
       DJ Create
     </a>
     <ul class="nav-links">
@@ -56,8 +149,6 @@
           <a href="#contacto" class="btn-ghost" data-scroll>Hablemos →</a>
         </div>
         <p class="hero-meta">
-          <span>Est. 2021</span>
-          <span class="hero-meta-sep"></span>
           <span>+50 proyectos</span>
           <span class="hero-meta-sep"></span>
           <span>Murcia · ES</span>
@@ -65,8 +156,19 @@
       </div>
     </div>
 
-    <div class="scroll-hint">
-      <span>Scroll</span>
+    <!-- Cursor custom (reticle scope) — sigue al ratón en el hero -->
+    <div class="scroll-hint" aria-hidden="true">
+      <svg class="shc" viewBox="0 0 28 28" aria-hidden="true">
+        <circle class="shc-ring" cx="14" cy="14" r="13"/>
+        <circle class="shc-ring shc-ring--dashed" cx="14" cy="14" r="8"/>
+        <line class="shc-scan" x1="3" y1="14" x2="25" y2="14"/>
+        <line class="shc-tick shc-tick--n" x1="14" y1="0" x2="14" y2="3"/>
+        <line class="shc-tick shc-tick--s" x1="14" y1="25" x2="14" y2="28"/>
+        <line class="shc-tick shc-tick--e" x1="25" y1="14" x2="28" y2="14"/>
+        <line class="shc-tick shc-tick--w" x1="0" y1="14" x2="3" y2="14"/>
+        <circle class="shc-dot" cx="14" cy="14" r="1.8"/>
+      </svg>
+      <span class="shc-label">Scroll</span>
       <div class="scroll-bar"></div>
     </div>
   </section>
@@ -83,75 +185,107 @@
         <p class="section-lead">Desde landing pages que convierten hasta experiencias 3D cinematográficas. Elige el plan que encaje con tu proyecto.</p>
       </div>
 
-      <div class="plans-grid plans-grid--bento" data-reveal-stagger="120">
-        <article class="plan-card plan-card-feature plan-card--hero reveal-up">
-          <span class="plan-badge">Más popular</span>
-          <header class="plan-head">
-            <p class="plan-name">Plan Avanzado</p>
-            <p class="plan-price"><span>400</span><em>€</em></p>
-          </header>
-          <p class="plan-desc">Web multipágina con animaciones avanzadas, blog y panel para gestionar contenidos.</p>
-          <ul class="plan-features">
-            <li>Hasta 6 páginas a medida</li>
-            <li>Animaciones GSAP / scroll</li>
-            <li>Blog con CMS</li>
-            <li>SEO técnico avanzado</li>
-            <li>Analytics + dashboard</li>
-            <li>2 meses de soporte</li>
-          </ul>
-          <a href="#contacto" class="plan-cta plan-cta-solid" data-scroll>Empezar →</a>
-        </article>
+      <div class="plans-list" data-reveal-stagger="100">
 
-        <article class="plan-card reveal-up">
-          <header class="plan-head">
-            <p class="plan-name">Plan Básico</p>
-            <p class="plan-price"><span>300</span><em>€</em></p>
-          </header>
-          <p class="plan-desc">Web one-page profesional para autónomos y pequeños negocios.</p>
-          <ul class="plan-features">
-            <li>Diseño one-page responsive</li>
-            <li>Hasta 4 secciones</li>
-            <li>Formulario de contacto</li>
-            <li>SEO básico on-page</li>
-            <li>Hosting + dominio (1er año)</li>
-          </ul>
-          <a href="#contacto" class="plan-cta" data-scroll>Empezar →</a>
-        </article>
-
-        <article class="plan-card reveal-up">
-          <header class="plan-head">
-            <p class="plan-name">Plan 3D</p>
-            <p class="plan-price"><span>500</span><em>€</em></p>
-          </header>
-          <p class="plan-desc">Experiencia inmersiva con escenas 3D y scroll cinematográfico.</p>
-          <ul class="plan-features">
-            <li>Escenas 3D con Three.js</li>
-            <li>Animaciones scroll-driven</li>
-            <li>Modelado básico incluido</li>
-            <li>Optimización móvil</li>
-            <li>Diseño cinematográfico</li>
-          </ul>
-          <a href="#contacto" class="plan-cta" data-scroll>Empezar →</a>
-        </article>
-
-        <article class="plan-card plan-card--wide reveal-up">
-          <header class="plan-head plan-head--row">
-            <div>
-              <p class="plan-name">Plan Tienda</p>
-              <p class="plan-price"><span>desde 800</span><em>€</em></p>
+        <!-- 01 Plan Basico -->
+        <article class="plan-row reveal-up" data-num="01">
+          <div class="plan-row__left">
+            <span class="plan-row__num">01</span>
+            <div class="plan-row__identity">
+              <p class="plan-row__name">Plan Básico</p>
+              <p class="plan-row__price"><span>300</span><em>€</em></p>
             </div>
-            <p class="plan-desc plan-desc--inline">Tienda online completa con pasarela de pago, gestión de productos y envíos.</p>
-          </header>
-          <ul class="plan-features plan-features--row">
-            <li>Catálogo ilimitado</li>
-            <li>Stripe / Redsys integrado</li>
-            <li>Panel de gestión</li>
-            <li>Cupones y descuentos</li>
-            <li>Email transaccional</li>
-            <li>Formación incluida</li>
-          </ul>
-          <a href="#contacto" class="plan-cta" data-scroll>Empezar →</a>
+          </div>
+          <div class="plan-row__center">
+            <p class="plan-row__desc">Web one-page profesional para autónomos y pequeños negocios.</p>
+            <ul class="plan-row__features">
+              <li>Diseño one-page responsive</li>
+              <li>Hasta 4 secciones</li>
+              <li>Formulario de contacto</li>
+              <li>SEO básico on-page</li>
+              <li>Hosting + dominio (1er año)</li>
+            </ul>
+          </div>
+          <div class="plan-row__right">
+            <a href="#contacto" class="plan-row__cta" data-scroll>Empezar →</a>
+          </div>
         </article>
+
+        <!-- 02 Plan Avanzado (featured) -->
+        <article class="plan-row plan-row--featured reveal-up" data-num="02">
+          <span class="plan-row__badge">Más popular</span>
+          <div class="plan-row__left">
+            <span class="plan-row__num">02</span>
+            <div class="plan-row__identity">
+              <p class="plan-row__name">Plan Avanzado</p>
+              <p class="plan-row__price"><span>400</span><em>€</em></p>
+            </div>
+          </div>
+          <div class="plan-row__center">
+            <p class="plan-row__desc">Web multipágina con animaciones avanzadas, blog y panel para gestionar contenidos.</p>
+            <ul class="plan-row__features">
+              <li>Hasta 6 páginas a medida</li>
+              <li>Animaciones GSAP / scroll</li>
+              <li>Blog con CMS</li>
+              <li>SEO técnico avanzado</li>
+              <li>Analytics + dashboard</li>
+              <li>2 meses de soporte</li>
+            </ul>
+          </div>
+          <div class="plan-row__right">
+            <a href="#contacto" class="plan-row__cta plan-row__cta--solid" data-scroll>Empezar →</a>
+          </div>
+        </article>
+
+        <!-- 03 Plan 3D -->
+        <article class="plan-row reveal-up" data-num="03">
+          <div class="plan-row__left">
+            <span class="plan-row__num">03</span>
+            <div class="plan-row__identity">
+              <p class="plan-row__name">Plan 3D</p>
+              <p class="plan-row__price"><span>500</span><em>€</em></p>
+            </div>
+          </div>
+          <div class="plan-row__center">
+            <p class="plan-row__desc">Experiencia inmersiva con escenas 3D y scroll cinematográfico.</p>
+            <ul class="plan-row__features">
+              <li>Escenas 3D con Three.js</li>
+              <li>Animaciones scroll-driven</li>
+              <li>Modelado básico incluido</li>
+              <li>Optimización móvil</li>
+              <li>Diseño cinematográfico</li>
+            </ul>
+          </div>
+          <div class="plan-row__right">
+            <a href="#contacto" class="plan-row__cta" data-scroll>Empezar →</a>
+          </div>
+        </article>
+
+        <!-- 04 Plan Tienda -->
+        <article class="plan-row reveal-up" data-num="04">
+          <div class="plan-row__left">
+            <span class="plan-row__num">04</span>
+            <div class="plan-row__identity">
+              <p class="plan-row__name">Plan Tienda</p>
+              <p class="plan-row__price"><span>desde 800</span><em>€</em></p>
+            </div>
+          </div>
+          <div class="plan-row__center">
+            <p class="plan-row__desc">Tienda online completa con pasarela de pago, gestión de productos y envíos.</p>
+            <ul class="plan-row__features">
+              <li>Catálogo ilimitado</li>
+              <li>Stripe / Redsys integrado</li>
+              <li>Panel de gestión</li>
+              <li>Cupones y descuentos</li>
+              <li>Email transaccional</li>
+              <li>Formación incluida</li>
+            </ul>
+          </div>
+          <div class="plan-row__right">
+            <a href="#contacto" class="plan-row__cta" data-scroll>Empezar →</a>
+          </div>
+        </article>
+
       </div>
     </div>
   </section>
@@ -210,56 +344,81 @@
       </div>
 
       <div class="portfolio-grid portfolio-grid--editorial" data-reveal-stagger="100">
-        <a href="#" class="portfolio-card portfolio-card--w4 reveal-blur">
-          <div class="portfolio-thumb" style="--c1:#0FB5BA;--c2:#7C3AED;"></div>
+
+        <!-- ════════════════════════════════════════════════════════════
+             PLANTILLA — copia este bloque por cada proyecto real.
+             Sustituye:
+               · href      → URL real del proyecto
+               · data-url  → dominio que se muestra en la barra
+               · <video>   → ruta a tu MP4 (assets/portfolio/<slug>.mp4)
+               · tag/título/desc → datos reales
+
+             Tamaños disponibles (combina libremente para grid editorial):
+               .portfolio-card--w2   → 2 cols (vertical)
+               .portfolio-card--w3   → 3 cols (estándar)
+               .portfolio-card--w4   → 4 cols (destacado horizontal)
+
+             Borra los .portfolio-card--placeholder cuando subas tu primer
+             proyecto. La tarjeta CTA del final puedes mantenerla siempre.
+        ════════════════════════════════════════════════════════════ -->
+
+        <!--
+        <a href="https://tudominio.com" target="_blank" rel="noopener" class="portfolio-card portfolio-card--w4 reveal-blur" data-url="tudominio.com">
+          <div class="portfolio-thumb portfolio-thumb--video">
+            <div class="portfolio-bar">
+              <span class="portfolio-bar-dots"><i class="dot dot--r"></i><i class="dot dot--y"></i><i class="dot dot--g"></i></span>
+              <span class="portfolio-bar-url">tudominio.com</span>
+            </div>
+            <video src="assets/portfolio/proyecto.mp4" autoplay loop muted playsinline preload="metadata"></video>
+          </div>
           <div class="portfolio-meta">
-            <span class="portfolio-tag">3D · Inmersivo</span>
-            <h3 class="portfolio-title">Aurora Studio</h3>
-            <p class="portfolio-desc">Web cinematográfica con scroll-driven 3D para estudio creativo.</p>
+            <span class="portfolio-tag">Categoría · Tipo</span>
+            <h3 class="portfolio-title">Nombre del proyecto</h3>
+            <p class="portfolio-desc">Una línea sobre el reto y la solución.</p>
           </div>
         </a>
+        -->
 
-        <a href="#" class="portfolio-card portfolio-card--w2 reveal-blur">
-          <div class="portfolio-thumb" style="--c1:#EC4899;--c2:#1E1B4B;"></div>
-          <div class="portfolio-meta">
-            <span class="portfolio-tag">E-commerce</span>
-            <h3 class="portfolio-title">Maris Cosmetics</h3>
-            <p class="portfolio-desc">Tienda online con experiencia de producto inmersiva.</p>
+        <!-- Placeholders elegantes — borrar cuando haya proyectos reales -->
+        <div class="portfolio-card portfolio-card--placeholder portfolio-card--w3 reveal-blur" aria-hidden="true">
+          <div class="portfolio-thumb portfolio-thumb--video">
+            <div class="portfolio-bar">
+              <span class="portfolio-bar-dots"><i class="dot dot--r"></i><i class="dot dot--y"></i><i class="dot dot--g"></i></span>
+              <span class="portfolio-bar-url">en-produccion.djcreate.es</span>
+            </div>
+            <div class="portfolio-skeleton">
+              <span class="portfolio-skeleton-tag">Próximamente</span>
+            </div>
           </div>
-        </a>
-
-        <a href="#" class="portfolio-card portfolio-card--w3 reveal-blur">
-          <div class="portfolio-thumb" style="--c1:#FBBF24;--c2:#04060F;"></div>
           <div class="portfolio-meta">
-            <span class="portfolio-tag">Branding</span>
-            <h3 class="portfolio-title">Norte 47</h3>
-            <p class="portfolio-desc">Identidad y web para restaurante de cocina nórdica.</p>
+            <span class="portfolio-tag">Caso · En producción</span>
+            <h3 class="portfolio-title">Proyecto en preparación</h3>
+            <p class="portfolio-desc">Estoy puliendo este caso antes de mostrarlo. Vuelve pronto.</p>
           </div>
-        </a>
+        </div>
 
-        <a href="#" class="portfolio-card portfolio-card--w3 reveal-blur">
-          <div class="portfolio-thumb" style="--c1:#00F5D4;--c2:#0F172A;"></div>
+        <div class="portfolio-card portfolio-card--placeholder portfolio-card--w3 reveal-blur" aria-hidden="true">
+          <div class="portfolio-thumb portfolio-thumb--video">
+            <div class="portfolio-bar">
+              <span class="portfolio-bar-dots"><i class="dot dot--r"></i><i class="dot dot--y"></i><i class="dot dot--g"></i></span>
+              <span class="portfolio-bar-url">caso-de-estudio.djcreate.es</span>
+            </div>
+            <div class="portfolio-skeleton">
+              <span class="portfolio-skeleton-tag">Próximamente</span>
+            </div>
+          </div>
           <div class="portfolio-meta">
-            <span class="portfolio-tag">SaaS</span>
-            <h3 class="portfolio-title">Volta Analytics</h3>
-            <p class="portfolio-desc">Dashboard de métricas con visualizaciones a medida.</p>
+            <span class="portfolio-tag">Caso · En producción</span>
+            <h3 class="portfolio-title">Caso de estudio en montaje</h3>
+            <p class="portfolio-desc">Editando el vídeo y la documentación. Disponible en breve.</p>
           </div>
-        </a>
+        </div>
 
-        <a href="#" class="portfolio-card portfolio-card--w4 reveal-blur">
-          <div class="portfolio-thumb" style="--c1:#7C3AED;--c2:#0EA5E9;"></div>
-          <div class="portfolio-meta">
-            <span class="portfolio-tag">Landing · 3D</span>
-            <h3 class="portfolio-title">Solar Forge</h3>
-            <p class="portfolio-desc">Producto físico contado con animación 3D scroll-sync.</p>
-          </div>
-        </a>
-
-        <a href="#contacto" class="portfolio-card portfolio-card--cta portfolio-card--w2 reveal-blur" data-scroll>
+        <a href="#contacto" class="portfolio-card portfolio-card--cta portfolio-card--w6 reveal-blur" data-scroll>
           <div class="portfolio-cta-inner">
-            <span class="portfolio-tag">+</span>
-            <h3 class="portfolio-title">¿El siguiente<br>es el tuyo?</h3>
-            <p>Hablemos →</p>
+            <span class="portfolio-tag">+ proyecto</span>
+            <h3 class="portfolio-title">¿El siguiente caso<br><span class="grad">es el tuyo?</span></h3>
+            <p>Cuéntame tu idea → escribimos guion, diseño y código</p>
           </div>
         </a>
       </div>
@@ -279,7 +438,7 @@
           <div class="nosotros-aside-inner">
             <p class="section-eyebrow"><span>04 / Nosotros</span></p>
             <h2 class="section-title split-words has-rule">Estudio<br>pequeño,<br><span class="grad">obsesión<br>grande.</span></h2>
-            <p class="nosotros-meta">DJ Create<br>Murcia, ES<br>Est. 2021</p>
+            <p class="nosotros-meta">DJ Create<br>Murcia, ES</p>
           </div>
         </aside>
 
@@ -357,7 +516,10 @@
   <footer class="footer">
     <div class="footer-top">
       <a href="#hero" class="nav-logo" data-scroll>
-        <span class="nav-logo-mark">●</span>
+        <svg class="nav-logo-mark" viewBox="0 0 22 22" aria-hidden="true">
+          <circle cx="11" cy="11" r="8.5" fill="none" stroke="url(#djc-grad)" stroke-width="1.5"/>
+          <circle cx="11" cy="11" r="2.6" fill="url(#djc-grad)"/>
+        </svg>
         DJ Create
       </a>
       <ul class="footer-links">
@@ -375,12 +537,83 @@
     <div class="footer-bottom">
       <p>© <span id="year"></span> DJ Create. Hecho con obsesión en Murcia.</p>
       <p>
-        <a href="#">Privacidad</a> · <a href="#">Cookies</a> · <a href="#">Aviso legal</a>
+        <a href="aviso-legal.html">Aviso legal</a> ·
+        <a href="politica-privacidad.html">Privacidad</a> ·
+        <a href="politica-cookies.html">Cookies</a> ·
+        <a href="#" data-cookie-open>Configurar cookies</a>
       </p>
     </div>
   </footer>
 
+  <!-- COOKIE BANNER -->
+  <div id="cookieBanner" class="cookie-banner" role="dialog" aria-modal="false" aria-labelledby="cookieBannerTitle" aria-hidden="true" hidden>
+    <div class="cookie-banner__head">
+      <span class="cookie-banner__mark" aria-hidden="true"></span>
+      <span class="cookie-banner__eyebrow" id="cookieBannerTitle">Aviso de cookies</span>
+    </div>
+    <p class="cookie-banner__text">
+      Usamos cookies propias y de terceros para que el sitio funcione, medir el uso y mostrarte una experiencia coherente.
+      Puedes aceptar todas, rechazar las no esenciales o configurar tu elección. Más información en nuestra
+      <a href="politica-cookies.html">Política de Cookies</a>.
+    </p>
+    <div class="cookie-banner__actions">
+      <button type="button" class="cookie-btn cookie-btn--text" data-cookie-config>Configurar</button>
+      <button type="button" class="cookie-btn cookie-btn--ghost" data-cookie-reject>Rechazar</button>
+      <button type="button" class="cookie-btn cookie-btn--primary" data-cookie-accept-all>Aceptar todas</button>
+    </div>
+  </div>
+
+  <!-- COOKIE MODAL -->
+  <div id="cookieModal" class="cookie-modal" role="dialog" aria-modal="true" aria-labelledby="cookieModalTitle" aria-hidden="true" hidden>
+    <div class="cookie-modal__backdrop" aria-hidden="true"></div>
+    <div class="cookie-modal__dialog">
+      <h3 class="cookie-modal__title" id="cookieModalTitle">Preferencias de cookies</h3>
+      <p class="cookie-modal__lede">Activa o desactiva cada categoría según tus preferencias. Las cookies técnicas son imprescindibles para que el sitio funcione y no pueden desactivarse.</p>
+
+      <div class="cookie-cat">
+        <div>
+          <p class="cookie-cat__name">Necesarias</p>
+          <p class="cookie-cat__desc">Mantienen la sesión, las preferencias básicas y permiten que el sitio funcione correctamente. Siempre activas.</p>
+        </div>
+        <label class="cookie-switch" aria-label="Cookies necesarias (siempre activas)">
+          <input type="checkbox" data-cookie-toggle="necessary" checked disabled>
+          <span class="cookie-switch__slider"></span>
+        </label>
+      </div>
+
+      <div class="cookie-cat">
+        <div>
+          <p class="cookie-cat__name">Analítica</p>
+          <p class="cookie-cat__desc">Nos ayuda a entender cómo se usa el sitio, de forma agregada y anónima, para mejorar la experiencia.</p>
+        </div>
+        <label class="cookie-switch" aria-label="Cookies de analítica">
+          <input type="checkbox" data-cookie-toggle="analytics">
+          <span class="cookie-switch__slider"></span>
+        </label>
+      </div>
+
+      <div class="cookie-cat">
+        <div>
+          <p class="cookie-cat__name">Marketing</p>
+          <p class="cookie-cat__desc">Permiten medir la eficacia de campañas y mostrar contenido relevante en plataformas externas.</p>
+        </div>
+        <label class="cookie-switch" aria-label="Cookies de marketing">
+          <input type="checkbox" data-cookie-toggle="marketing">
+          <span class="cookie-switch__slider"></span>
+        </label>
+      </div>
+
+      <div class="cookie-modal__actions">
+        <button type="button" class="cookie-btn cookie-btn--text" data-cookie-close>Cerrar</button>
+        <button type="button" class="cookie-btn cookie-btn--ghost" data-cookie-save>Guardar selección</button>
+        <button type="button" class="cookie-btn cookie-btn--primary" data-cookie-accept-all-modal>Aceptar todas</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/intro.js"></script>
   <script src="js/frames.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/cookies.js"></script>
 </body>
 </html>
