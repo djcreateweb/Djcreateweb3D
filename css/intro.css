@@ -1,9 +1,8 @@
 /* ════════════════════════════════════════════════════════════
-   DJ CREATE 3D — Pantalla de carga · v4.0 (clean rewrite)
+   DJ CREATE 3D — Pantalla de carga · v5.0
    Design tokens:
      bg base  : linear-gradient(148deg, #020813 0%, #06152C 44%, #01060E 100%)
      neon teal : #00F5D4   neon blue : #3D9DFF   neon purple : #7C3AED
-     text dim  : rgba(200, 240, 255, 0.45)
    Fonts: Syne 800 · Fraunces italic · Geist Mono
    ════════════════════════════════════════════════════════════ */
 
@@ -39,7 +38,7 @@ body.intro-active { overflow: hidden; }
   opacity: .65;
 }
 
-/* Neon grid — fade in animated, mask radial at centre */
+/* Neon grid */
 #dj-intro::after {
   content: '';
   position: absolute;
@@ -119,7 +118,7 @@ body.intro-active { overflow: hidden; }
   animation: dji-hud-in .55s cubic-bezier(.25,.46,.45,.94) .4s forwards;
 }
 #dj-intro .ib--t { top: 0; }
-#dj-intro .ib--b { display: none; }
+#dj-intro .ib--b { bottom: 0; }
 
 /* ── Tick marks — hidden ──────────────────────────────────── */
 #dj-intro .itks { display: none; }
@@ -168,7 +167,7 @@ body.intro-active { overflow: hidden; }
   animation: dji-aurora 7s ease-in-out infinite;
 }
 
-/* ── Wordmark row (DJ + Create side-by-side) ──────────────── */
+/* ── Wordmark row ─────────────────────────────────────────── */
 #dj-intro .iwm {
   display: flex;
   flex-direction: row;
@@ -177,6 +176,22 @@ body.intro-active { overflow: hidden; }
   gap: clamp(.5rem, 1.2vw, 1.1rem);
   width: 100%;
 }
+
+/* ── Vertical divider between DJ and Create ──────────────── */
+#dj-intro .idiv {
+  width: 1px;
+  height: clamp(3rem, 6vw, 5.5rem);
+  background: linear-gradient(180deg,
+    transparent,
+    rgba(0,245,212,.5) 40%,
+    rgba(61,157,255,.35) 60%,
+    transparent);
+  align-self: center;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity .9s ease .3s;
+}
+#dj-intro .idiv.is-in { opacity: 1; }
 
 /* ── DJ wrapper ───────────────────────────────────────────── */
 #dj-intro .idj-w {
@@ -216,7 +231,11 @@ body.intro-active { overflow: hidden; }
   -webkit-background-clip: text;
           background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 30px rgba(0,245,212,.3)) drop-shadow(0 18px 40px rgba(0,0,0,.32));
+  filter:
+    drop-shadow(-2px 0 rgba(255,50,120,.15))
+    drop-shadow(2px 0 rgba(0,200,255,.15))
+    drop-shadow(0 0 30px rgba(0,245,212,.3))
+    drop-shadow(0 18px 40px rgba(0,0,0,.32));
 }
 
 /* ── Create text ──────────────────────────────────────────── */
@@ -233,7 +252,17 @@ body.intro-active { overflow: hidden; }
   -webkit-background-clip: text;
           background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 22px 44px rgba(0,0,0,.3)) drop-shadow(0 0 24px rgba(0,245,212,.16));
+  filter:
+    drop-shadow(-1px 0 rgba(200,0,255,.12))
+    drop-shadow(2px 0 rgba(0,245,212,.14))
+    drop-shadow(0 22px 44px rgba(0,0,0,.3))
+    drop-shadow(0 0 24px rgba(0,245,212,.16));
+}
+
+/* ── Glitch flash on wordmark entry ──────────────────────── */
+#dj-intro .idj.glitch-flash,
+#dj-intro .icr.glitch-flash {
+  animation: dji-glitch .32s linear forwards;
 }
 
 /* ── Shimmer line ─────────────────────────────────────────── */
@@ -251,7 +280,7 @@ body.intro-active { overflow: hidden; }
   animation: dji-shimmer .9s cubic-bezier(.25,.46,.45,.94) forwards;
 }
 
-/* ── Divider — hidden ─────────────────────────────────────── */
+/* ── Divider line — hidden ────────────────────────────────── */
 #dj-intro .iln { display: none; }
 
 /* ── Subtitle ─────────────────────────────────────────────── */
@@ -261,10 +290,10 @@ body.intro-active { overflow: hidden; }
   width: 100%;
   margin-top: clamp(1.4rem, 2.6vw, 2.2rem);
   font-family: "Geist Mono", "Courier New", monospace;
-  font-size: clamp(.54rem, .75vw, .72rem);
-  letter-spacing: .30em;
+  font-size: clamp(.56rem, .78vw, .76rem);
+  letter-spacing: .28em;
   text-transform: uppercase;
-  color: rgba(220,248,255,.62);
+  color: rgba(220,248,255,.72);
   opacity: 0;
   transform: translateY(8px);
 }
@@ -278,7 +307,7 @@ body.intro-active { overflow: hidden; }
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: .85rem;
+  gap: .75rem;
   margin-top: clamp(1.6rem, 3.2vw, 2.8rem);
   opacity: 0;
   transform: translateY(8px);
@@ -286,28 +315,46 @@ body.intro-active { overflow: hidden; }
 #dj-intro .iload.is-in {
   animation: dji-fade-up .85s cubic-bezier(.25,.46,.45,.94) forwards;
 }
-#dj-intro .iload span {
+
+/* ── Loader top row (label + percentage) ─────────────────── */
+#dj-intro .iload-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: min(540px, 58vw);
+  gap: 1rem;
+}
+#dj-intro .iload-top > span {
   font-family: "Geist Mono", "Courier New", monospace;
   font-size: clamp(.48rem, .66vw, .66rem);
   letter-spacing: .28em;
   text-transform: uppercase;
   color: rgba(220,248,255,.44);
 }
+#dj-intro .ipct {
+  font-family: "Geist Mono", "Courier New", monospace;
+  font-size: clamp(.52rem, .7vw, .68rem);
+  letter-spacing: .15em;
+  color: rgba(0,245,212,.82);
+  min-width: 3.4ch;
+  text-align: right;
+  flex-shrink: 0;
+}
 
 /* ── Progress bar ─────────────────────────────────────────── */
 #dj-intro .iprog {
   width: min(540px, 58vw);
-  height: 2px;
+  height: 3px;
   background: rgba(255,255,255,.06);
   border-radius: 999px;
   overflow: hidden;
-  box-shadow: 0 0 0 1px rgba(0,245,212,.05), 0 16px 40px rgba(0,0,0,.24);
+  box-shadow: 0 0 0 1px rgba(0,245,212,.18), 0 0 18px rgba(0,245,212,.08), 0 16px 40px rgba(0,0,0,.24);
 }
 #dj-intro .iprog-f {
   width: 0;
   height: 100%;
   background: linear-gradient(90deg, transparent 0%, #00F5D4 18%, #3D9DFF 68%, #7C3AED 100%);
-  box-shadow: 0 0 20px rgba(0,245,212,.65), 0 0 40px rgba(61,157,255,.28);
+  box-shadow: 0 0 14px rgba(0,245,212,.9), 0 0 28px rgba(61,157,255,.5), 0 0 50px rgba(124,58,237,.25);
 }
 
 /* ── Lock pulse ───────────────────────────────────────────── */
@@ -389,22 +436,18 @@ body.intro-active { overflow: hidden; }
   to   { top: 101%; }
 }
 
-/* Corner in — TL (base): scale from .35 */
 @keyframes dji-corner-in {
   from { opacity: 0; transform: scale(.35); }
   to   { opacity: .85; transform: scale(1); }
 }
-/* TR: mirror scaleX, so from scaleX(-1)*scale(.35) → scaleX(-1) */
 @keyframes dji-corner-in-tr {
   from { opacity: 0; transform: scaleX(-1) scale(.35); }
   to   { opacity: .85; transform: scaleX(-1) scale(1); }
 }
-/* BL */
 @keyframes dji-corner-in-bl {
   from { opacity: 0; transform: scaleY(-1) scale(.35); }
   to   { opacity: .85; transform: scaleY(-1) scale(1); }
 }
-/* BR */
 @keyframes dji-corner-in-br {
   from { opacity: 0; transform: scale(-1,-1) scale(.35); }
   to   { opacity: .85; transform: scale(-1,-1) scale(1); }
@@ -440,6 +483,17 @@ body.intro-active { overflow: hidden; }
 @keyframes dji-lock {
   0%, 100% { transform: translate(-50%,-50%) scale(1); }
   42%       { transform: translate(-50%,-50%) scale(1.022); }
+}
+
+@keyframes dji-glitch {
+  0%   { transform: translate(-5px, 1px)   skewX(-3deg); opacity: .88; }
+  14%  { transform: translate(4px, -1px)   skewX(2deg);  opacity: 1;   }
+  28%  { transform: translate(-3px, 2px)   skewX(-1.5deg); opacity: .85; }
+  42%  { transform: translate(5px, 0)      skewX(3deg);  opacity: 1;   }
+  57%  { transform: translate(-2px, -1px)  skewX(-2deg); opacity: .92; }
+  71%  { transform: translate(2px, 1px)    skewX(1deg);  opacity: .95; }
+  85%  { transform: translate(-1px, 0)     skewX(0);     opacity: 1;   }
+  100% { transform: translate(0, 0)        skewX(0);     opacity: 1;   }
 }
 
 @keyframes dji-flash {
@@ -502,6 +556,7 @@ body.intro-active { overflow: hidden; }
     right: 3.6rem;
   }
   #dj-intro .ib--t .itag:nth-child(2) { display: none; }
+  #dj-intro .ib--b { display: none; }
 
   #dj-intro .is {
     top: 50%;
@@ -509,6 +564,9 @@ body.intro-active { overflow: hidden; }
   }
   #dj-intro .iwm {
     gap: .4rem;
+  }
+  #dj-intro .idiv {
+    height: clamp(2rem, 12vw, 3.5rem);
   }
   #dj-intro .idj {
     font-size: clamp(4rem,22vw,6.2rem);
@@ -530,6 +588,7 @@ body.intro-active { overflow: hidden; }
   #dj-intro .iload {
     margin-top: 1.4rem;
   }
+  #dj-intro .iload-top,
   #dj-intro .iprog {
     width: min(74vw, 340px);
   }

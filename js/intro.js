@@ -1,7 +1,7 @@
-﻿/* ════════════════════════════════════════════════════════════
-   DJ CREATE 3D - Pantalla de carga v4.0 (clean rewrite)
-   Canvas: targeting rings + converging particles
-   Timeline: ~9.5s total
+/* ════════════════════════════════════════════════════════════
+   DJ CREATE 3D - Pantalla de carga v5.0
+   Canvas: wireframe cube + targeting rings + particle trails
+   Timeline: ~9.1s total
    ════════════════════════════════════════════════════════════ */
 (function () {
   'use strict';
@@ -72,8 +72,8 @@
   var br = el('div', { className: 'ico ico--br' }); br.appendChild(svgCorner('#3D9DFF')); hud.appendChild(br);
 
   var ibt = el('div', { className: 'ib ib--t' });
-  var tagA = el('span', { className: 'itag' }); tagA.textContent = 'SYS.ACQUIRE · v4.0';
-  var tagB = el('span', { className: 'itag' }); tagB.textContent = '37°59\'N  1°07\'W · MURCIA';
+  var tagA = el('span', { className: 'itag' }); tagA.textContent = 'SYS.ACQUIRE · v5.0';
+  var tagB = el('span', { className: 'itag' }); tagB.textContent = '37°59\'N  1°07\'W · MURCIA';
   var tagT = el('span', { className: 'itag itimer', id: 'itimer' }); tagT.textContent = '00:000';
   ibt.appendChild(tagA); ibt.appendChild(tagB); ibt.appendChild(tagT);
 
@@ -95,6 +95,8 @@
   var djTx = el('span', { className: 'idj' }); djTx.textContent = 'DJ';
   djw.appendChild(djTx);
 
+  var idiv = el('span', { className: 'idiv' });
+
   var crw  = el('div', { className: 'icr-w', id: 'icrw' });
   var crTx = el('span', { className: 'icr' }); crTx.textContent = 'Create';
   crw.appendChild(crTx);
@@ -103,17 +105,20 @@
   var iln  = el('div', { className: 'iln',  id: 'iln'  });
 
   var sub  = el('p', { className: 'isub', id: 'isub' });
-  sub.textContent = 'Agencia de diseño web 3D  ·  Murcia';
 
-  var load = el('div', { className: 'iload', id: 'iload' });
+  var load     = el('div', { className: 'iload', id: 'iload' });
+  var loadTop  = el('div', { className: 'iload-top' });
   var loadSpan = el('span'); loadSpan.textContent = 'Cargando experiencia';
-  var prog = el('div', { className: 'iprog' });
+  var pct      = el('span', { className: 'ipct', id: 'ipct' }); pct.textContent = '0%';
+  loadTop.appendChild(loadSpan); loadTop.appendChild(pct);
+  var prog  = el('div', { className: 'iprog' });
   var pfill = el('div', { className: 'iprog-f', id: 'ipf' });
   prog.appendChild(pfill);
-  load.appendChild(loadSpan); load.appendChild(prog);
+  load.appendChild(loadTop); load.appendChild(prog);
 
   var wmw = el('div', { className: 'iwm' });
   wmw.appendChild(djw);
+  wmw.appendChild(idiv);
   wmw.appendChild(crw);
   stage.appendChild(wmw);
   stage.appendChild(shm);
@@ -135,7 +140,19 @@
   var sec       = 0;
   var lastTs    = 0;
   var ringA     = 0;
+  var cubeAlpha = 0;
   var lockPulse = 0;
+
+  // Cube geometry (unit cube centred at origin)
+  var CUBE_VERTS = [
+    [-1,-1,-1],[ 1,-1,-1],[ 1, 1,-1],[-1, 1,-1],
+    [-1,-1, 1],[ 1,-1, 1],[ 1, 1, 1],[-1, 1, 1]
+  ];
+  var CUBE_EDGES = [
+    [0,1],[1,2],[2,3],[3,0],
+    [4,5],[5,6],[6,7],[7,4],
+    [0,4],[1,5],[2,6],[3,7]
+  ];
 
   // Particles
   var N_PT = 40;
@@ -147,13 +164,14 @@
       var a = Math.random() * Math.PI * 2;
       var d = Math.random() * Math.max(W, H) * .65 + 80;
       pts.push({
-        sx:  CX + Math.cos(a) * d,
-        sy:  CY + Math.sin(a) * d,
-        tx:  CX + (Math.random() - .5) * 320,
-        ty:  CY + (Math.random() - .5) * 320,
-        r:   Math.random() * 1.4 + .4,
-        col: Math.random() > .5 ? '180,100%,65%' : '200,100%,60%',
-        spd: Math.random() * .24 + .18
+        sx:    CX + Math.cos(a) * d,
+        sy:    CY + Math.sin(a) * d,
+        tx:    CX + (Math.random() - .5) * 320,
+        ty:    CY + (Math.random() - .5) * 320,
+        r:     Math.random() * 1.4 + .4,
+        col:   Math.random() > .5 ? '180,100%,65%' : '200,100%,60%',
+        spd:   Math.random() * .24 + .18,
+        trail: []
       });
     }
   }
@@ -173,7 +191,7 @@
   }
 
   function lerp(a, b, t) { return a + (b - a) * Math.min(1, Math.max(0, t)); }
-  function ease(t)       { return t < .5 ? 2*t*t : -1+(4-2*t)*t; }
+  function ease(t)        { return t < .5 ? 2*t*t : -1+(4-2*t)*t; }
 
   function ring(r, lw, color, dash, angle) {
     ctx.save();
@@ -202,6 +220,42 @@
     ctx.restore();
   }
 
+  // Rotating wireframe cube — perspective projection
+  function drawCube(t) {
+    if (cubeAlpha <= 0) return;
+    var size   = Math.min(W, H) * 0.28;
+    var angleY = t * 0.3;
+    var angleX = 0.35;
+    var fov    = 2.8;
+
+    var proj = CUBE_VERTS.map(function(v) {
+      // Rotate Y
+      var rx  = v[0] * Math.cos(angleY) + v[2] * Math.sin(angleY);
+      var ry  = v[1];
+      var rz  = -v[0] * Math.sin(angleY) + v[2] * Math.cos(angleY);
+      // Rotate X (fixed tilt)
+      var ry2 = ry * Math.cos(angleX) - rz * Math.sin(angleX);
+      var rz2 = ry * Math.sin(angleX) + rz * Math.cos(angleX);
+      // Perspective divide
+      var sc  = size / (fov + rz2);
+      return [CX + rx * sc, CY + ry2 * sc, rz2];
+    });
+
+    ctx.save();
+    CUBE_EDGES.forEach(function(e) {
+      var a = proj[e[0]];
+      var b = proj[e[1]];
+      var depth = Math.min(1, Math.max(0.2, (a[2] + b[2]) / 4 + 0.65));
+      ctx.strokeStyle = 'rgba(0,245,212,' + (cubeAlpha * 0.18 * depth) + ')';
+      ctx.lineWidth   = 0.7;
+      ctx.beginPath();
+      ctx.moveTo(a[0], a[1]);
+      ctx.lineTo(b[0], b[1]);
+      ctx.stroke();
+    });
+    ctx.restore();
+  }
+
   function frame(ts) {
     if (!alive) return;
     rafId = requestAnimationFrame(frame);
@@ -211,7 +265,7 @@
 
     ctx.clearRect(0, 0, W, H);
 
-    // Grid: animates 0 -> 0.8 in first 0.6s
+    // Grid: fade in during first 0.6s
     var gA = Math.min(.8, sec / .6);
     if (gA > 0) {
       var step = 62;
@@ -227,13 +281,38 @@
       ctx.restore();
     }
 
-    // Particles
+    // Wireframe cube (behind rings)
+    drawCube(sec);
+
+    // Particles with light trails
     var pAlpha = Math.min(1, sec * .9) * Math.max(0, 1 - Math.max(0, (sec - 3.2) / .9));
     if (pAlpha > 0) {
       pts.forEach(function(p) {
-        var prog = ease(Math.min(1, sec / 3.8) * p.spd * 1.8);
-        var px   = lerp(p.sx, p.tx, prog);
-        var py   = lerp(p.sy, p.ty, prog);
+        var pr = ease(Math.min(1, sec / 3.8) * p.spd * 1.8);
+        var px = lerp(p.sx, p.tx, pr);
+        var py = lerp(p.sy, p.ty, pr);
+
+        // Update trail
+        p.trail.push({ x: px, y: py });
+        if (p.trail.length > 10) p.trail.shift();
+
+        // Draw trail as connected segments with fading opacity
+        if (p.trail.length > 1) {
+          for (var ti = 0; ti < p.trail.length - 1; ti++) {
+            var tA = pAlpha * ((ti + 1) / p.trail.length) * 0.30;
+            ctx.save();
+            ctx.globalAlpha = tA;
+            ctx.strokeStyle = 'hsl(' + p.col + ')';
+            ctx.lineWidth   = p.r * 0.55;
+            ctx.beginPath();
+            ctx.moveTo(p.trail[ti].x, p.trail[ti].y);
+            ctx.lineTo(p.trail[ti + 1].x, p.trail[ti + 1].y);
+            ctx.stroke();
+            ctx.restore();
+          }
+        }
+
+        // Main dot
         ctx.save();
         ctx.globalAlpha = pAlpha * .55;
         ctx.fillStyle   = 'hsl(' + p.col + ')';
@@ -259,11 +338,9 @@
         ring(R1 * (1 + lp * .025), .8, 'rgba(0,245,212,' + (lp * .22) + ')', null, 0);
       }
 
-      // Mid ring -- dashed counter-rotation
       ring(R1 * .68, .6, 'rgba(0,180,255,' + (a * .14) + ')',
         [8, 14], -(sec / 24) * Math.PI * 2);
 
-      // Inner arc
       arc(R1 * .42, .8, 'rgba(0,245,212,' + (a * .20) + ')',
         Math.PI * .1, Math.PI * 1.65,  sec / 18 * Math.PI * 2);
     }
@@ -275,11 +352,9 @@
   resize();
   window.addEventListener('resize', handleResize, { passive: true });
 
-  // Element refs
-  var timerEl = document.getElementById('itimer');
-
   // Timer
-  var t0 = performance.now();
+  var timerEl    = document.getElementById('itimer');
+  var t0         = performance.now();
   var timerAlive = true;
   (function tickTimer() {
     if (!timerAlive) return;
@@ -293,7 +368,7 @@
   // Start canvas loop
   rafId = requestAnimationFrame(function(ts) { lastTs = ts; requestAnimationFrame(frame); });
 
-  // Fade helper
+  // Fade helper (animates target.value from→to over duration ms)
   function fadeIn(target, from, to, duration) {
     var v    = from;
     var step = (to - from) / (duration / 16);
@@ -309,6 +384,10 @@
     get value()  { return ringA; },
     set value(v) { ringA = v; }
   };
+  var cubeProxy = {
+    get value()  { return cubeAlpha; },
+    set value(v) { cubeAlpha = v; }
+  };
 
   // Page reveal
   var revealPrepared = false;
@@ -323,11 +402,11 @@
     revealNav  = document.getElementById('nav');
 
     if (revealHero) {
-      revealHero.style.opacity       = '0';
-      revealHero.style.filter        = 'blur(22px) brightness(.78) saturate(1.18)';
-      revealHero.style.transform     = 'translateY(34px) scale(1.035)';
+      revealHero.style.opacity         = '0';
+      revealHero.style.filter          = 'blur(22px) brightness(.78) saturate(1.18)';
+      revealHero.style.transform       = 'translateY(34px) scale(1.035)';
       revealHero.style.transformOrigin = 'center top';
-      revealHero.style.transition    = 'opacity 1.65s cubic-bezier(.16,1,.3,1), filter 1.65s cubic-bezier(.16,1,.3,1), transform 1.65s cubic-bezier(.16,1,.3,1)';
+      revealHero.style.transition      = 'opacity 1.65s cubic-bezier(.16,1,.3,1), filter 1.65s cubic-bezier(.16,1,.3,1), transform 1.65s cubic-bezier(.16,1,.3,1)';
     }
     if (revealNav) {
       revealNav.style.opacity    = '0';
@@ -359,10 +438,10 @@
 
   function clearPageReveal() {
     if (revealHero) {
-      revealHero.style.transition    = '';
-      revealHero.style.opacity       = '';
-      revealHero.style.filter        = '';
-      revealHero.style.transform     = '';
+      revealHero.style.transition      = '';
+      revealHero.style.opacity         = '';
+      revealHero.style.filter          = '';
+      revealHero.style.transform       = '';
       revealHero.style.transformOrigin = '';
     }
     if (revealNav) {
@@ -374,16 +453,34 @@
     if (revealBeam) revealBeam.remove();
   }
 
-  // -- SEQUENCE (~9.5s total) -----------------------------------
+  // -- SEQUENCE (~9.1s total) -----------------------------------
 
-  // T+500: rings fade in (900ms)
-  setTimeout(function() { fadeIn(ringProxy, 0, 1, 900); }, 500);
+  // T+450: rings + cube fade in
+  setTimeout(function() {
+    fadeIn(ringProxy, 0, 1, 900);
+    fadeIn(cubeProxy, 0, 1, 1100);
+  }, 450);
 
   // T+1200: DJ slams up
   setTimeout(function() { djw.classList.add('is-in'); }, 1200);
 
-  // T+1900: CREATE sweeps in
-  setTimeout(function() { crw.classList.add('is-in'); }, 1900);
+  // T+1400: glitch flash on DJ (200ms into its entry)
+  setTimeout(function() {
+    djTx.classList.add('glitch-flash');
+    setTimeout(function() { djTx.classList.remove('glitch-flash'); }, 360);
+  }, 1400);
+
+  // T+1900: Create sweeps in + divider appears
+  setTimeout(function() {
+    crw.classList.add('is-in');
+    idiv.classList.add('is-in');
+  }, 1900);
+
+  // T+2100: glitch flash on Create (200ms into its entry)
+  setTimeout(function() {
+    crTx.classList.add('glitch-flash');
+    setTimeout(function() { crTx.classList.remove('glitch-flash'); }, 360);
+  }, 2100);
 
   // T+2400: shimmer line
   setTimeout(function() { shm.classList.add('is-run'); }, 2400);
@@ -395,49 +492,67 @@
     setTimeout(function() { root.classList.remove('is-lock'); }, 700);
   }, 2750);
 
-  // T+3350: subtitle fades up
-  setTimeout(function() { sub.classList.add('is-in'); }, 3350);
+  // T+3350: subtitle typewriter
+  setTimeout(function() {
+    sub.classList.add('is-in');
+    var text = 'ESTUDIO DE DISEÑO WEB · EXPERIENCIAS 3D';
+    sub.textContent = '';
+    text.split('').forEach(function(ch, i) {
+      setTimeout(function() { sub.textContent += ch; }, i * 42);
+    });
+  }, 3350);
 
   // T+3850: loading bar appears
   setTimeout(function() { load.classList.add('is-in'); }, 3850);
 
-  // T+4150: progress bar fills (1.35s)
+  // T+4150: progress bar fills (1.35s) + percentage counter
   setTimeout(function() {
     pfill.style.transition = 'width 1.35s cubic-bezier(.25,.46,.45,.94)';
     pfill.style.width      = '100%';
+    var pctEl    = document.getElementById('ipct');
+    var pctStart = performance.now();
+    var pctDur   = 1350;
+    (function animPct() {
+      var t     = Math.min(1, (performance.now() - pctStart) / pctDur);
+      var eased = t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+      if (pctEl) pctEl.textContent = Math.round(eased * 100) + '%';
+      if (t < 1) requestAnimationFrame(animPct);
+      else if (pctEl) pctEl.textContent = '100%';
+    })();
   }, 4150);
 
-  // T+5700: stage evaporates + ring + HUD fade
+  // T+5300: stage evaporates + rings + cube + HUD fade
   setTimeout(function() {
     stage.style.transition = 'opacity 1s cubic-bezier(.25,.46,.45,.94), transform 1s cubic-bezier(.25,.46,.45,.94), filter 1s cubic-bezier(.25,.46,.45,.94)';
     stage.style.opacity    = '0';
     stage.style.transform  = 'translate(-50%, -50%) scale(1.035)';
     stage.style.filter     = 'blur(14px)';
     fadeIn(ringProxy, ringA, 0, 1000);
+    fadeIn(cubeProxy, cubeAlpha, 0, 800);
     root.querySelectorAll('.ib, .ico, .itks').forEach(function(e) {
       e.style.transition = 'opacity .8s ease';
       e.style.opacity    = '0';
     });
-  }, 5700);
+  }, 5300);
 
-  // T+6400: cinematic bloom
-  setTimeout(function() { root.classList.add('is-revealing'); }, 6400);
+  // T+6000: cinematic bloom
+  setTimeout(function() { root.classList.add('is-revealing'); }, 6000);
 
-  // T+7400: flash
+  // T+7000: flash
   setTimeout(function() {
     var flash = document.createElement('div');
     flash.className = 'iflash';
     root.appendChild(flash);
     setTimeout(function() { flash.remove(); }, 700);
-  }, 7400);
+  }, 7000);
 
-  // T+7950: page enters below
-  setTimeout(function() { preparePageReveal(); }, 7950);
+  // T+7550: page enters below
+  setTimeout(function() { preparePageReveal(); }, 7550);
 
-  // T+8350: final wipe-out
-  setTimeout(function() { root.classList.add('is-out'); }, 8350);
+  // T+7950: final wipe-out
+  setTimeout(function() { root.classList.add('is-out'); }, 7950);
 
-  // T+9800: cleanup
+  // T+9400: cleanup
   setTimeout(function() {
     alive      = false;
     timerAlive = false;
@@ -447,6 +562,6 @@
     document.body.classList.remove('intro-active');
     root.remove();
     setTimeout(clearPageReveal, 800);
-  }, 9800);
+  }, 9400);
 
 })();
