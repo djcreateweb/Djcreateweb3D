@@ -2552,6 +2552,10 @@ button:focus-visible {
 #hero .section-eyebrow {
   opacity: 1;
   transform: translateY(0);
+  margin: 0 0 clamp(.9rem, 1.6vw, 1.4rem);
+}
+#hero .hero-tag {
+  margin-top: 0;
 }
 
 /* ── 2. Cards con stagger refinado ────────────────────────── */
