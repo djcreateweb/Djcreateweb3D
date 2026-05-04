@@ -2546,6 +2546,12 @@ button:focus-visible {
   transform: translateY(0);
 }
 
+/* Hero eyebrow: siempre visible (no usa el sistema .section-head.in) */
+#hero .section-eyebrow {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 /* ── 2. Cards con stagger refinado ────────────────────────── */
 .plan-row.reveal-up,
 .portfolio-card.reveal-blur {
