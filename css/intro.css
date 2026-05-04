@@ -224,28 +224,24 @@ body.intro-active { overflow: hidden; }
 
 /* ── DJ wrapper ───────────────────────────────────────────── */
 #dj-intro .idj-w {
-  overflow: hidden;
   opacity: 0;
-  filter: blur(18px);
-  clip-path: inset(0 0 100% 0);
-  transform: translateY(28px) scale(.94);
-  will-change: transform, opacity, filter, clip-path;
+  filter: blur(38px) brightness(4.5) saturate(1.8);
+  transform: translateY(22px) scale(.88);
+  will-change: transform, opacity, filter;
 }
 #dj-intro .idj-w.is-in {
-  animation: dji-dj-in 1.2s cubic-bezier(.16,1,.3,1) forwards;
+  animation: dji-dj-in 1.55s cubic-bezier(.16,1,.3,1) forwards;
 }
 
 /* ── Create wrapper ───────────────────────────────────────── */
 #dj-intro .icr-w {
-  overflow: hidden;
   opacity: 0;
-  filter: blur(20px);
-  clip-path: inset(0 100% 0 0);
-  transform: translateY(30px) scale(.97);
-  will-change: transform, opacity, filter, clip-path;
+  filter: blur(42px) brightness(4) saturate(1.6);
+  transform: translateY(28px) scale(.89);
+  will-change: transform, opacity, filter;
 }
 #dj-intro .icr-w.is-in {
-  animation: dji-create-in 1.3s cubic-bezier(.16,1,.3,1) forwards;
+  animation: dji-create-in 1.65s cubic-bezier(.16,1,.3,1) .08s forwards;
 }
 
 /* ── DJ text ──────────────────────────────────────────────── */
@@ -256,15 +252,14 @@ body.intro-active { overflow: hidden; }
   font-size: clamp(5rem,10.2vw,10.5rem);
   letter-spacing: -.04em;
   line-height: .80;
-  background: linear-gradient(115deg, #FFFFFF 0%, #E0FFFD 14%, #00F5D4 44%, #00C4FF 72%, #7C3AED 100%);
+  background: linear-gradient(118deg, #FFFFFF 0%, #C8FFF6 22%, #00F5D4 50%, #3D9DFF 78%, #7C3AED 100%);
   -webkit-background-clip: text;
           background-clip: text;
   -webkit-text-fill-color: transparent;
   filter:
-    drop-shadow(-4px 0 rgba(255,50,120,.32))
-    drop-shadow(4px 0 rgba(0,200,255,.32))
-    drop-shadow(0 0 52px rgba(0,245,212,.60))
-    drop-shadow(0 22px 52px rgba(0,0,0,.46));
+    drop-shadow(0 0 48px rgba(0,245,212,.70))
+    drop-shadow(0 0 96px rgba(61,157,255,.35))
+    drop-shadow(0 24px 52px rgba(0,0,0,.45));
 }
 
 /* ── Create text ──────────────────────────────────────────── */
@@ -277,15 +272,14 @@ body.intro-active { overflow: hidden; }
   font-size: clamp(5.2rem,10.8vw,11.4rem);
   letter-spacing: 0;
   line-height: .80;
-  background: linear-gradient(115deg, #FFFFFF 0%, #C0FFF8 18%, #00F5D4 40%, #3D9DFF 62%, #A855F7 82%, #6D28D9 100%);
+  background: linear-gradient(118deg, #FFFFFF 0%, #B0FFF8 18%, #00F5D4 42%, #3D9DFF 65%, #A855F7 85%, #6D28D9 100%);
   -webkit-background-clip: text;
           background-clip: text;
   -webkit-text-fill-color: transparent;
   filter:
-    drop-shadow(-3px 0 rgba(220,0,255,.30))
-    drop-shadow(3px 0 rgba(0,245,212,.26))
-    drop-shadow(0 26px 56px rgba(0,0,0,.44))
-    drop-shadow(0 0 38px rgba(0,245,212,.30));
+    drop-shadow(0 0 44px rgba(0,245,212,.55))
+    drop-shadow(0 0 88px rgba(168,85,247,.28))
+    drop-shadow(0 28px 56px rgba(0,0,0,.42));
 }
 
 /* ── Per-letter spans — visibles, el wrapper anima el conjunto */
@@ -545,10 +539,11 @@ body.intro-active { overflow: hidden; }
 }
 
 @keyframes dji-dj-in {
-  0%   { opacity: 0; filter: blur(22px) brightness(2.2);   clip-path: inset(0 0 100% 0); transform: translateY(36px) scale(.90); }
-  52%  { opacity: 1; filter: blur(0)    brightness(1.24);  clip-path: inset(0 0 0 0);    transform: translateY(-7px) scale(1.028); }
-  72%  {             filter: blur(0)    brightness(1.06);                                 transform: translateY(1px)  scale(.999); }
-  100% { opacity: 1; filter: blur(0)    brightness(1);     clip-path: inset(0 0 0 0);    transform: translateY(0) scale(1); }
+  0%   { opacity: 0; filter: blur(38px) brightness(4.5) saturate(1.8); transform: translateY(22px) scale(.88); }
+  28%  { opacity: 1; filter: blur(14px) brightness(2.4) saturate(1.4); transform: translateY(-9px) scale(1.024); }
+  52%  {             filter: blur(4px)  brightness(1.5)  saturate(1.2); transform: translateY(-3px) scale(1.018); }
+  74%  {             filter: blur(1px)  brightness(1.12) saturate(1.05); transform: translateY(2px)  scale(.998); }
+  100% { opacity: 1; filter: blur(0)    brightness(1)    saturate(1);   transform: translateY(0)    scale(1); }
 }
 
 @keyframes dji-letter-in {
@@ -621,9 +616,11 @@ body.intro-active { overflow: hidden; }
 }
 
 @keyframes dji-create-in {
-  0%   { opacity: 0; filter: blur(20px); clip-path: inset(0 100% 0 0); transform: translateY(30px) scale(.97); }
-  68%  { opacity: 1; filter: blur(0);    clip-path: inset(0 0 0 0);    transform: translateY(-4px) scale(1.015); }
-  100% { opacity: 1; filter: blur(0);    clip-path: inset(0 0 0 0);    transform: translateY(0) scale(1); }
+  0%   { opacity: 0; filter: blur(42px) brightness(4)   saturate(1.6); transform: translateY(28px) scale(.89); }
+  32%  { opacity: 1; filter: blur(16px) brightness(2.2) saturate(1.35); transform: translateY(-10px) scale(1.020); }
+  56%  {             filter: blur(5px)  brightness(1.45) saturate(1.15); transform: translateY(-4px)  scale(1.014); }
+  76%  {             filter: blur(1px)  brightness(1.10) saturate(1.04); transform: translateY(2px)   scale(.999); }
+  100% { opacity: 1; filter: blur(0)    brightness(1)   saturate(1);    transform: translateY(0)     scale(1); }
 }
 
 /* ── Mobile ───────────────────────────────────────────────── */
