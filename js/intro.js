@@ -112,8 +112,14 @@
   prog.appendChild(pfill);
   load.appendChild(loadSpan); load.appendChild(prog);
 
-  stage.appendChild(djw); stage.appendChild(crw); stage.appendChild(shm);
-  stage.appendChild(iln); stage.appendChild(sub); stage.appendChild(load);
+  var wmw = el('div', { className: 'iwm' });
+  wmw.appendChild(djw);
+  wmw.appendChild(crw);
+  stage.appendChild(wmw);
+  stage.appendChild(shm);
+  stage.appendChild(iln);
+  stage.appendChild(sub);
+  stage.appendChild(load);
   root.appendChild(stage);
 
   document.body.prepend(root);
