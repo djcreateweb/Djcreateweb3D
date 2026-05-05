@@ -737,11 +737,13 @@ body.dj-loader-active { overflow: hidden; }
   #dj-loader-root .dj-loader-v-lines { display: none; }
 }
 
+/* prefers-reduced-motion: el loader se mantiene 5s pero sin
+   pulse/caret infinitos. Las animaciones de entrada/telón se
+   conservan porque son finitas y transmiten progreso. */
 @media (prefers-reduced-motion: reduce) {
-  #dj-loader-root *,
-  #dj-loader-root *::before,
-  #dj-loader-root *::after {
-    animation-duration: 0.01s !important;
-    animation-iteration-count: 1 !important;
+  #dj-loader-root .dj-loader-pill .dj-loader-dot,
+  #dj-loader-root .dj-loader-divider .dj-loader-mark,
+  #dj-loader-root .dj-loader-status .dj-loader-label .dj-loader-cursor {
+    animation: none !important;
   }
 }
