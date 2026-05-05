@@ -33,15 +33,15 @@ body.dj-loader-active { overflow: hidden; }
   --edge:           rgba(255, 255, 255, 0.04);
 
   /* ───── Timeline ─────
-     Entrada:  0.0s → 1.5s  (1.5s)
-     Visible:  1.5s → 1.8s  (0.3s)
-     Salida:   1.8s → 2.0s  (0.2s)
-     Telón:    2.0s → 4.0s  (2s — apertura completa)
-     TOTAL:    4s */
+     Entrada:  0.0s → 0.7s  (0.7s — todos a la vez con stagger corto)
+     Visible:  0.7s → 0.8s  (0.1s)
+     Salida:   0.8s → 1.0s  (0.2s)
+     Telón:    1.0s → 2.0s  (1s — apertura realista con ease-in-out)
+     TOTAL:    2s */
   --t-in-start:     0.05s;
-  --t-out-start:    1.80s;
-  --t-curtain:      2.00s;
-  --t-curtain-dur:  2.00s;
+  --t-out-start:    0.80s;
+  --t-curtain:      1.00s;
+  --t-curtain-dur:  1.00s;
 
   /* Root */
   position: fixed;
@@ -110,15 +110,19 @@ body.dj-loader-active { overflow: hidden; }
 #dj-loader-root .dj-loader-curtain-half.dj-loader-left  .dj-loader-curtain-content { left: 0; }
 #dj-loader-root .dj-loader-curtain-half.dj-loader-right .dj-loader-curtain-content { right: 0; }
 
-#dj-loader-root .dj-loader-curtain-half.dj-loader-left  .dj-loader-curtain-content {
-  animation: dj-loader-curtain-out-left  var(--t-curtain-dur) var(--t-curtain) linear forwards;
+/* Inset shadow en el borde interno: simula que el telón tiene
+   grosor y profundidad. Sutil, sin convertirse en línea. */
+#dj-loader-root .dj-loader-curtain-half.dj-loader-left .dj-loader-curtain-content {
+  box-shadow: inset -3px 0 18px -6px rgba(0,0,0,0.55);
+  animation: dj-loader-curtain-out-left var(--t-curtain-dur) var(--t-curtain) cubic-bezier(.55, 0, .15, 1) forwards;
 }
 #dj-loader-root .dj-loader-curtain-half.dj-loader-right .dj-loader-curtain-content {
-  animation: dj-loader-curtain-out-right var(--t-curtain-dur) var(--t-curtain) linear forwards;
+  box-shadow: inset 3px 0 18px -6px rgba(0,0,0,0.55);
+  animation: dj-loader-curtain-out-right var(--t-curtain-dur) var(--t-curtain) cubic-bezier(.55, 0, .15, 1) forwards;
 }
-/* Movimiento UNIFORME: cada segundo de los 3s avanza
-   exactamente un tercio del ancho. No usa scale ni filter para
-   que el desplazamiento sea inequívocamente visible. */
+/* cubic-bezier(.55, 0, .15, 1) = arranque con inercia, aceleración
+   suave, deceleración prolongada al final. Sensación física de
+   tela pesada empujada por una fuerza, no robótica como linear. */
 @keyframes dj-loader-curtain-out-left {
   0%   { transform: translateX(0); }
   100% { transform: translateX(-100%); }
@@ -452,7 +456,7 @@ body.dj-loader-active { overflow: hidden; }
   transform: translateX(-34px) skewX(-8deg);
   filter: blur(20px);
   will-change: transform, filter, opacity;
-  animation: dj-loader-letter-sweep .55s calc(var(--t-in-start) + .35s + var(--char-delay)) cubic-bezier(.16,.84,.24,1) forwards;
+  animation: dj-loader-letter-sweep .35s calc(var(--t-in-start) + .10s + (var(--char-delay) / 2.5)) cubic-bezier(.16,.84,.24,1) forwards;
 }
 
 #dj-loader-root .dj-loader-divider {
@@ -547,7 +551,7 @@ body.dj-loader-active { overflow: hidden; }
   width: 0%;
   background: linear-gradient(90deg, var(--cyan), var(--magenta));
   box-shadow: 0 0 8px rgba(94, 229, 216, 0.4);
-  animation: dj-loader-load 1.6s calc(var(--t-in-start) + 0.4s) cubic-bezier(.2,.7,.3,1) forwards;
+  animation: dj-loader-load 0.5s calc(var(--t-in-start) + 0.3s) cubic-bezier(.2,.7,.3,1) forwards;
 }
 @keyframes dj-loader-load { 0% { width: 0%; } 100% { width: 100%; } }
 
@@ -632,63 +636,65 @@ body.dj-loader-active { overflow: hidden; }
 /* ====================================================
    ASIGNACIÓN — entrada (1.5s) + salida (0.5s)  TOTAL 5s
    ==================================================== */
+/* Stagger compacto: entradas 0.4s, todas dentro de 0-0.7s.
+   Salidas 0.25s, todas dentro de 0.8-1.0s. */
 #dj-loader-root .dj-loader-topbar .dj-loader-left {
   opacity: 0;
   animation:
-    dj-loader-in-slide-left 0.7s var(--t-in-start)                    cubic-bezier(.2,.8,.2,1) forwards,
-    dj-loader-out-fade-up   0.4s calc(var(--t-out-start) + 0.20s)      cubic-bezier(.5,0,.7,.4) forwards;
+    dj-loader-in-slide-left 0.4s var(--t-in-start)                    cubic-bezier(.2,.8,.2,1) forwards,
+    dj-loader-out-fade-up   0.25s calc(var(--t-out-start) + 0.10s)     cubic-bezier(.5,0,.7,.4) forwards;
 }
 #dj-loader-root .dj-loader-topbar .dj-loader-center {
   opacity: 0;
   animation:
-    dj-loader-in-pop        0.7s calc(var(--t-in-start) + 0.10s)       cubic-bezier(.4,1.6,.4,1) forwards,
-    dj-loader-out-pop-down  0.4s calc(var(--t-out-start) + 0.15s)      cubic-bezier(.5,0,.7,.4) forwards;
+    dj-loader-in-pop        0.4s calc(var(--t-in-start) + 0.05s)       cubic-bezier(.4,1.6,.4,1) forwards,
+    dj-loader-out-pop-down  0.25s calc(var(--t-out-start) + 0.05s)     cubic-bezier(.5,0,.7,.4) forwards;
 }
 #dj-loader-root .dj-loader-topbar .dj-loader-right {
   opacity: 0;
   animation:
-    dj-loader-in-slide-right 0.7s calc(var(--t-in-start) + 0.20s)      cubic-bezier(.2,.8,.2,1) forwards,
-    dj-loader-out-fade-up    0.4s calc(var(--t-out-start) + 0.20s)     cubic-bezier(.5,0,.7,.4) forwards;
+    dj-loader-in-slide-right 0.4s calc(var(--t-in-start) + 0.10s)      cubic-bezier(.2,.8,.2,1) forwards,
+    dj-loader-out-fade-up    0.25s calc(var(--t-out-start) + 0.10s)    cubic-bezier(.5,0,.7,.4) forwards;
 }
 
 #dj-loader-root .dj-loader-logo {
   opacity: 1;
   animation:
-    dj-loader-out-blur-zoom  0.5s calc(var(--t-out-start) + 0.10s)     cubic-bezier(.6,.05,.85,.5) forwards;
+    dj-loader-out-blur-zoom  0.30s calc(var(--t-out-start) + 0.05s)    cubic-bezier(.6,.05,.85,.5) forwards;
   will-change: transform, filter, opacity;
 }
 
 #dj-loader-root .dj-loader-divider {
   opacity: 0;
   animation:
-    dj-loader-in-expand-x    0.7s calc(var(--t-in-start) + 0.45s)      cubic-bezier(.4,0,.2,1) forwards,
-    dj-loader-out-collapse-x 0.4s var(--t-out-start)                    cubic-bezier(.5,0,.7,.4) forwards;
+    dj-loader-in-expand-x    0.4s calc(var(--t-in-start) + 0.20s)      cubic-bezier(.4,0,.2,1) forwards,
+    dj-loader-out-collapse-x 0.25s var(--t-out-start)                  cubic-bezier(.5,0,.7,.4) forwards;
 }
 
 #dj-loader-root .dj-loader-tagline {
   opacity: 0;
   animation:
-    dj-loader-in-fade-up    0.7s calc(var(--t-in-start) + 0.55s)       cubic-bezier(.2,.7,.2,1) forwards,
-    dj-loader-out-fade-down 0.4s calc(var(--t-out-start) + 0.05s)      cubic-bezier(.5,0,.7,.4) forwards;
+    dj-loader-in-fade-up    0.4s calc(var(--t-in-start) + 0.25s)       cubic-bezier(.2,.7,.2,1) forwards,
+    dj-loader-out-fade-down 0.25s calc(var(--t-out-start) + 0.02s)     cubic-bezier(.5,0,.7,.4) forwards;
 }
 
 #dj-loader-root .dj-loader-footer-block .dj-loader-left {
   opacity: 0;
   animation:
-    dj-loader-in-fade-up-from-bottom-left 0.7s calc(var(--t-in-start) + 0.65s) cubic-bezier(.2,.7,.2,1) forwards,
-    dj-loader-out-slide-left              0.4s var(--t-out-start)               cubic-bezier(.5,0,.7,.4) forwards;
+    dj-loader-in-fade-up-from-bottom-left 0.4s calc(var(--t-in-start) + 0.30s) cubic-bezier(.2,.7,.2,1) forwards,
+    dj-loader-out-slide-left              0.25s var(--t-out-start)             cubic-bezier(.5,0,.7,.4) forwards;
 }
 #dj-loader-root .dj-loader-status {
   opacity: 0;
   animation:
-    dj-loader-in-fade        0.7s calc(var(--t-in-start) + 0.75s)      ease-out forwards,
-    dj-loader-out-blur-zoom  0.4s calc(var(--t-out-start) + 0.10s)     cubic-bezier(.5,0,.7,.4) forwards;
+    dj-loader-in-fade        0.4s calc(var(--t-in-start) + 0.35s)      ease-out forwards,
+    dj-loader-out-blur-zoom  0.25s calc(var(--t-out-start) + 0.05s)    cubic-bezier(.5,0,.7,.4) forwards;
 }
 #dj-loader-root .dj-loader-footer-block .dj-loader-right {
   opacity: 0;
   animation:
-    dj-loader-in-fade-up-from-bottom-right 0.7s calc(var(--t-in-start) + 0.85s) cubic-bezier(.2,.7,.2,1) forwards,
-    dj-loader-out-slide-right              0.4s calc(var(--t-out-start) + 0.05s) cubic-bezier(.5,0,.7,.4) forwards;
+    dj-loader-in-fade-up-from-bottom-right 0.4s calc(var(--t-in-start) + 0.40s) cubic-bezier(.2,.7,.2,1) forwards,
+    dj-loader-out-slide-right              0.25s calc(var(--t-out-start) + 0.02s) cubic-bezier(.5,0,.7,.4) forwards;
 }
 
 /* ---------- MOBILE ---------- */

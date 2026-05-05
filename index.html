@@ -140,12 +140,12 @@
       document.body.classList.add('dj-loader-active');
       window.scrollTo(0, 0);
 
-      // T+3.5s — libera clicks durante los últimos 0.5s del telón
+      // T+1.7s — libera clicks durante los últimos 0.3s del telón
       setTimeout(function () {
         loader.style.pointerEvents = 'none';
-      }, 3500);
+      }, 1700);
 
-      // T+4.0s — total exacto: removeChild y libera scroll
+      // T+2.0s — total exacto: removeChild y libera scroll
       setTimeout(function () {
         document.documentElement.classList.remove('dj-loader-active');
         document.body.classList.remove('dj-loader-active');
@@ -154,7 +154,7 @@
         requestAnimationFrame(function () {
           window.scrollTo(0, 0);
         });
-      }, 4000);
+      }, 2000);
     })();
   </script>
 
