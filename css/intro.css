@@ -34,21 +34,21 @@ body.dj-loader-active { overflow: hidden; }
 
   /* ───── Timeline ─────
      Entrada:  0.0s → 1.5s  (1.5s)
-     Visible:  1.5s → 2.5s  (1s)
-     Salida:   2.5s → 3.0s  (0.5s)
-     Telon:    3.0s → 5.0s  (2s)
+     Visible:  1.5s → 1.8s  (0.3s)
+     Salida:   1.8s → 2.0s  (0.2s) — fade rápido del contenido
+     Telón:    2.0s → 5.0s  (3s — apertura completa)
      TOTAL:    5s */
   --t-in-start:     0.05s;
-  --t-out-start:    2.50s;
-  --t-curtain:      3.00s;
-  --t-curtain-dur:  2.00s;
+  --t-out-start:    1.80s;
+  --t-curtain:      2.00s;
+  --t-curtain-dur:  3.00s;
 
   /* Root */
   position: fixed;
   inset: 0;
   width: 100vw;
   height: 100vh;
-  background: #000;
+  background: transparent; /* la cortina y el bg-art se encargan del fondo durante la intro */
   color: var(--ink);
   font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -72,7 +72,7 @@ body.dj-loader-active { overflow: hidden; }
   position: absolute;
   inset: 0;
   z-index: 0;
-  background: radial-gradient(circle at 50% 50%, #060608 0%, #000 70%);
+  background: transparent; /* deja ver la página detrás cuando se abre el telón */
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -111,7 +111,7 @@ body.dj-loader-active { overflow: hidden; }
   pointer-events: none;
   opacity: 0;
   z-index: 2;
-  animation: dj-loader-trail-show 1.8s calc(var(--t-curtain) + 0.20s) ease-out forwards;
+  animation: dj-loader-trail-show var(--t-curtain-dur) var(--t-curtain) ease-out forwards;
 }
 #dj-loader-root .dj-loader-curtain-half.dj-loader-right::after {
   content: '';
@@ -126,7 +126,7 @@ body.dj-loader-active { overflow: hidden; }
   pointer-events: none;
   opacity: 0;
   z-index: 2;
-  animation: dj-loader-trail-show 1.8s calc(var(--t-curtain) + 0.20s) ease-out forwards;
+  animation: dj-loader-trail-show var(--t-curtain-dur) var(--t-curtain) ease-out forwards;
 }
 @keyframes dj-loader-trail-show {
   0%   { opacity: 0; }
@@ -146,10 +146,10 @@ body.dj-loader-active { overflow: hidden; }
 #dj-loader-root .dj-loader-curtain-half.dj-loader-right .dj-loader-curtain-content { right: 0; }
 
 #dj-loader-root .dj-loader-curtain-half.dj-loader-left  .dj-loader-curtain-content {
-  animation: dj-loader-curtain-out-left 1.8s calc(var(--t-curtain) + 0.20s) cubic-bezier(.76,.0,.24,1) forwards;
+  animation: dj-loader-curtain-out-left var(--t-curtain-dur) var(--t-curtain) cubic-bezier(.76,.0,.24,1) forwards;
 }
 #dj-loader-root .dj-loader-curtain-half.dj-loader-right .dj-loader-curtain-content {
-  animation: dj-loader-curtain-out-right 1.8s calc(var(--t-curtain) + 0.20s) cubic-bezier(.76,.0,.24,1) forwards;
+  animation: dj-loader-curtain-out-right var(--t-curtain-dur) var(--t-curtain) cubic-bezier(.76,.0,.24,1) forwards;
 }
 @keyframes dj-loader-curtain-out-left {
   0%   { transform: translateX(0)       scale(1)    ; filter: brightness(1); }
