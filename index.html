@@ -15,10 +15,10 @@
 </head>
 <body>
 
-  <!-- ════════════════════════════════════════════════════════════
+  <!-- ============================================================
        DJ CREATE — Loader (entrada 3s + salida 2s + cortina 2s = 7s)
        Clases prefijadas con dj-loader- para evitar colisiones.
-       ════════════════════════════════════════════════════════════ -->
+       ============================================================ -->
   <div id="dj-loader-root" class="dj-loader-root" aria-hidden="true">
 
     <!-- Capa final revelada tras la cortina -->
@@ -73,6 +73,7 @@
     <!-- Beam y halo -->
     <div class="dj-loader-beam"></div>
     <div class="dj-loader-beam-halo"></div>
+    <div class="dj-loader-iris" aria-hidden="true"></div>
 
     <div class="dj-loader-grain"></div>
 
@@ -99,7 +100,17 @@
       </header>
 
       <section class="dj-loader-core">
-        <h1 class="dj-loader-logo">DJ<span class="dj-loader-amp"></span>Create</h1>
+        <h1 class="dj-loader-logo" aria-label="DJ Create">
+          <span class="dj-loader-logo-char" style="--char-delay: 0ms;">D</span>
+          <span class="dj-loader-logo-char" style="--char-delay: 85ms;">J</span>
+          <span class="dj-loader-amp" aria-hidden="true"></span>
+          <span class="dj-loader-logo-char" style="--char-delay: 210ms;">C</span>
+          <span class="dj-loader-logo-char" style="--char-delay: 295ms;">r</span>
+          <span class="dj-loader-logo-char" style="--char-delay: 380ms;">e</span>
+          <span class="dj-loader-logo-char" style="--char-delay: 465ms;">a</span>
+          <span class="dj-loader-logo-char" style="--char-delay: 550ms;">t</span>
+          <span class="dj-loader-logo-char" style="--char-delay: 635ms;">e</span>
+        </h1>
 
         <div class="dj-loader-divider">
           <span class="dj-loader-line"></span>
@@ -127,6 +138,37 @@
     </main>
   </div>
 
+  <script>
+    (function () {
+      var loader = document.getElementById('dj-loader-root');
+      if (!loader) return;
+      if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+      document.documentElement.classList.add('dj-loader-active');
+      document.body.classList.add('dj-loader-active');
+      window.scrollTo(0, 0);
+
+      setTimeout(function () {
+        loader.classList.add('dj-loader-blackout');
+        loader.classList.add('dj-loader-opening');
+        window.scrollTo(0, 0);
+      }, 5000);
+
+      setTimeout(function () {
+        loader.style.pointerEvents = 'none';
+      }, 10500);
+
+      setTimeout(function () {
+        document.documentElement.classList.remove('dj-loader-active');
+        document.body.classList.remove('dj-loader-active');
+        if (loader.parentNode) loader.parentNode.removeChild(loader);
+        window.scrollTo(0, 0);
+        requestAnimationFrame(function () {
+          window.scrollTo(0, 0);
+        });
+      }, 11200);
+    })();
+  </script>
+
   <!-- Gradient defs — separados del intro para que sigan activos en nav/footer -->
   <svg width="0" height="0" style="position:absolute;pointer-events:none" aria-hidden="true">
     <defs>
@@ -137,61 +179,6 @@
       </linearGradient>
     </defs>
   </svg>
-
-  <!-- BRAND INTRO -->
-  <div id="brandIntro" class="brand-intro" role="presentation" aria-hidden="true">
-    <div class="bi-pattern" aria-hidden="true">
-      <span class="bi-line bi-line--a"></span>
-      <span class="bi-line bi-line--b"></span>
-      <span class="bi-line bi-line--c"></span>
-    </div>
-
-    <!-- Marco decorativo con esquinas y HUD bars -->
-    <div class="bi-frame">
-      <span class="bi-c bi-c--tl"></span>
-      <span class="bi-c bi-c--tr"></span>
-      <span class="bi-c bi-c--bl"></span>
-      <span class="bi-c bi-c--br"></span>
-
-      <header class="bi-hud bi-hud--top">
-        <span class="bi-rec"><span class="bi-rec-dot"></span>REC</span>
-        <span class="bi-slate">DJ–CREATE · TAKE 01 · SCENE 47</span>
-        <span class="bi-time" id="brandIntroTime">00:00:00</span>
-      </header>
-
-      <footer class="bi-hud bi-hud--bot">
-        <span class="bi-sig">● ○ ●</span>
-        <span class="bi-bars" aria-hidden="true">
-          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
-        </span>
-        <span class="bi-sig">DJCREATE.ES</span>
-      </footer>
-    </div>
-
-    <!-- Contenido centrado -->
-    <div class="bi-stage">
-      <svg class="bi-mark" viewBox="0 0 200 200" aria-hidden="true">
-        <circle class="bi-ring" cx="100" cy="100" r="84"></circle>
-        <circle class="bi-ring bi-ring--inner" cx="100" cy="100" r="64"></circle>
-        <line class="bi-scan" x1="16" y1="100" x2="184" y2="100"></line>
-        <text class="bi-mono" x="100" y="116" text-anchor="middle">DJ</text>
-      </svg>
-
-      <h1 class="bi-wordmark" aria-label="DJ Create">
-        <span class="bi-pre"><span>D</span><span>J</span></span><span class="bi-post"><span>&nbsp;</span><span>C</span><span>r</span><span>e</span><span>a</span><span>t</span><span>e</span></span>
-      </h1>
-
-      <figure class="bi-banner" aria-hidden="true">
-        <!-- Cambia esta ruta por la imagen horizontal/banner definitiva -->
-        <img src="frames/frame_0108.jpg" alt="">
-      </figure>
-
-      <p class="bi-status" id="biStatus" aria-live="polite">Preparando experiencia</p>
-    </div>
-
-    <!-- Barra de progreso al fondo -->
-    <div class="bi-bar" aria-hidden="true"><i></i></div>
-  </div>
 
   <!-- NAV FLOTANTE -->
   <nav id="nav" class="nav-pill">
@@ -392,7 +379,7 @@
 
       <div class="portfolio-grid portfolio-grid--editorial" data-reveal-stagger="100">
 
-        <!-- ════════════════════════════════════════════════════════════
+        <!-- ============================================================
              PLANTILLA — copia este bloque por cada proyecto real.
              Sustituye:
                · href      → URL real del proyecto
@@ -407,7 +394,7 @@
 
              Borra los .portfolio-card--placeholder cuando subas tu primer
              proyecto. La tarjeta CTA del final puedes mantenerla siempre.
-        ════════════════════════════════════════════════════════════ -->
+        ============================================================ -->
 
         <!--
         <a href="https://tudominio.com" target="_blank" rel="noopener" class="portfolio-card portfolio-card--w4 reveal-blur" data-url="tudominio.com">
@@ -673,8 +660,6 @@
       </div>
     </div>
   </div>
-
-  <script src="js/intro.js"></script>
   <script src="js/frames.js"></script>
   <script src="js/main.js"></script>
   <script src="js/cookies.js"></script>
