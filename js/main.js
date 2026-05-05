@@ -79,65 +79,6 @@ window.scrollTo(0, 0);
   setTimeout(exit, HARD_EXIT);
 })();
 
-// ── HERO WORD CASCADE — split title/sub en palabras ────────
-// Cuando .hero-content recibe la clase .visible (frames.js al
-// scrollear), cada .hero-word entra escalonada con CSS transition.
-(function splitHeroWords() {
-  function wrapWords(root, container) {
-    Array.from(root.childNodes).forEach((child) => {
-      if (child.nodeType === 3) {
-        const parts = child.textContent.split(/(\s+)/);
-        parts.forEach((part) => {
-          if (!part) return;
-          if (/^\s+$/.test(part)) {
-            container.appendChild(document.createTextNode(' '));
-          } else {
-            const span = document.createElement('span');
-            span.className = 'hero-word';
-            span.textContent = part;
-            container.appendChild(span);
-          }
-        });
-      } else if (child.tagName === 'BR') {
-        container.appendChild(child.cloneNode());
-      } else {
-        const wrapper = child.cloneNode(false);
-        wrapWords(child, wrapper);
-        container.appendChild(wrapper);
-      }
-    });
-  }
-
-  function splitElement(el, baseDelay, perWordDelay) {
-    if (!el || el.dataset.split === '1') return 0;
-    const tmp = document.createDocumentFragment();
-    wrapWords(el, tmp);
-    while (el.firstChild) el.removeChild(el.firstChild);
-    el.appendChild(tmp);
-    el.classList.add('is-split');
-    el.dataset.split = '1';
-    const words = el.querySelectorAll('.hero-word');
-    words.forEach((w, i) => {
-      w.style.setProperty('--word-delay', (baseDelay + i * perWordDelay) + 'ms');
-    });
-    return words.length;
-  }
-
-  function init() {
-    const title = document.querySelector('.hero-title');
-    const sub = document.querySelector('.hero-sub');
-    if (!title && !sub) return;
-    const titleCount = splitElement(title, 0, 95);
-    splitElement(sub, titleCount * 95 + 220, 55);
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init, { once: true });
-  } else {
-    init();
-  }
-})();
-
 // ── NAV SCROLLED STATE ─────────────────────────────────────
 const nav = document.getElementById("nav");
 window.addEventListener("scroll", () => {
