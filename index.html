@@ -9,10 +9,123 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=Geist+Mono:wght@400;500;600&family=Geist:wght@300;400;500;600;700&family=Syne:wght@800&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital,wght@0,400;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/intro.css">
 </head>
 <body>
+
+  <!-- ════════════════════════════════════════════════════════════
+       DJ CREATE — Loader (entrada 3s + salida 2s + cortina 2s = 7s)
+       Clases prefijadas con dj-loader- para evitar colisiones.
+       ════════════════════════════════════════════════════════════ -->
+  <div id="dj-loader-root" class="dj-loader-root" aria-hidden="true">
+
+    <!-- Capa final revelada tras la cortina -->
+    <div class="dj-loader-reveal">
+      <div class="dj-loader-reveal-ring"></div>
+      <div class="dj-loader-reveal-ring"></div>
+      <div class="dj-loader-reveal-ring"></div>
+    </div>
+
+    <!-- CORTINA: dos mitades con el bg-art duplicado -->
+    <div class="dj-loader-curtain">
+      <div class="dj-loader-curtain-half dj-loader-left">
+        <div class="dj-loader-curtain-content">
+          <div class="dj-loader-bg-art">
+            <div class="dj-loader-arc"></div>
+            <div class="dj-loader-plane dj-loader-plane-1"></div>
+            <div class="dj-loader-plane dj-loader-plane-2"></div>
+            <div class="dj-loader-plane dj-loader-plane-3"></div>
+            <div class="dj-loader-plane dj-loader-plane-4"></div>
+            <div class="dj-loader-plane dj-loader-plane-5"></div>
+            <div class="dj-loader-v-lines"></div>
+            <div class="dj-loader-corner-mark"></div>
+            <div class="dj-loader-dots"></div>
+            <div class="dj-loader-lines">
+              <span></span><span></span><span></span><span></span>
+            </div>
+            <div class="dj-loader-vignette"></div>
+          </div>
+        </div>
+      </div>
+      <div class="dj-loader-curtain-half dj-loader-right">
+        <div class="dj-loader-curtain-content">
+          <div class="dj-loader-bg-art">
+            <div class="dj-loader-arc"></div>
+            <div class="dj-loader-plane dj-loader-plane-1"></div>
+            <div class="dj-loader-plane dj-loader-plane-2"></div>
+            <div class="dj-loader-plane dj-loader-plane-3"></div>
+            <div class="dj-loader-plane dj-loader-plane-4"></div>
+            <div class="dj-loader-plane dj-loader-plane-5"></div>
+            <div class="dj-loader-v-lines"></div>
+            <div class="dj-loader-corner-mark"></div>
+            <div class="dj-loader-dots"></div>
+            <div class="dj-loader-lines">
+              <span></span><span></span><span></span><span></span>
+            </div>
+            <div class="dj-loader-vignette"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Beam y halo -->
+    <div class="dj-loader-beam"></div>
+    <div class="dj-loader-beam-halo"></div>
+
+    <div class="dj-loader-grain"></div>
+
+    <!-- MARCO EDITORIAL -->
+    <div class="dj-loader-frame">
+      <div class="dj-loader-corner dj-loader-tl"></div>
+      <div class="dj-loader-corner dj-loader-tr"></div>
+      <div class="dj-loader-corner dj-loader-bl"></div>
+      <div class="dj-loader-corner dj-loader-br"></div>
+    </div>
+
+    <!-- CONTENIDO -->
+    <main class="dj-loader-stage">
+      <header class="dj-loader-topbar">
+        <div class="dj-loader-left">
+          <span class="dj-loader-index">N.º 001</span>
+        </div>
+        <div class="dj-loader-center">
+          <span class="dj-loader-pill"><span class="dj-loader-dot"></span>En sesión</span>
+        </div>
+        <div class="dj-loader-right">
+          <span>2026</span>
+        </div>
+      </header>
+
+      <section class="dj-loader-core">
+        <h1 class="dj-loader-logo">DJ<span class="dj-loader-amp"></span>Create</h1>
+
+        <div class="dj-loader-divider">
+          <span class="dj-loader-line"></span>
+          <span class="dj-loader-mark"></span>
+          <span class="dj-loader-line"></span>
+        </div>
+
+        <p class="dj-loader-tagline">
+          Estudio de diseño web <span class="dj-loader-sep">·</span> Murcia
+        </p>
+      </section>
+
+      <footer class="dj-loader-footer-block">
+        <div class="dj-loader-left">Murcia · España</div>
+
+        <div class="dj-loader-status">
+          <span class="dj-loader-label">
+            Preparando la experiencia<span class="dj-loader-cursor"></span>
+          </span>
+          <div class="dj-loader-progress"><div class="dj-loader-bar"></div></div>
+        </div>
+
+        <div class="dj-loader-right dj-loader-meta">© DJ Create</div>
+      </footer>
+    </main>
+  </div>
 
   <!-- Gradient defs — separados del intro para que sigan activos en nav/footer -->
   <svg width="0" height="0" style="position:absolute;pointer-events:none" aria-hidden="true">
