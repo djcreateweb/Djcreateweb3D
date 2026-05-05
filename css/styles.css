@@ -1541,9 +1541,9 @@ h3, h4 {
   display: inline-block;
   box-shadow: inset 0 0 0 1px rgba(0,0,0,.3);
 }
-.portfolio-bar-dots .dot--r { background: #FF5F57; }
-.portfolio-bar-dots .dot--y { background: #FEBC2E; }
-.portfolio-bar-dots .dot--g { background: #28C840; }
+.portfolio-bar-dots .dot--r { background: #00F5D4; }
+.portfolio-bar-dots .dot--y { background: #3D9DFF; }
+.portfolio-bar-dots .dot--g { background: #7C3AED; }
 .portfolio-bar-url {
   position: absolute;
   left: 50%;
@@ -3586,4 +3586,85 @@ html { scrollbar-color: rgba(0,180,255,.35) transparent; }
     justify-content: center;
   }
   .cookie-modal__dialog { padding: 1.5rem; }
+}
+
+/* ════════════════════════════════════════════════════════════
+   HOVER HIGHLIGHT — borde azul en apartados al pasar el cursor
+   Reemplaza el cursor custom: visualiza el foco con un anillo
+   teal-azul + glow suave en cards y filas interactivas.
+   ════════════════════════════════════════════════════════════ */
+:root {
+  --hl-blue:      #3D9DFF;
+  --hl-blue-soft: rgba(61,157,255,.55);
+  --hl-glow:      rgba(61,157,255,.18);
+}
+
+/* Plan rows (servicios) */
+.plan-row {
+  transition: border-color .35s ease, box-shadow .35s ease, background-color .35s ease;
+}
+.plan-row:hover {
+  border-color: var(--hl-blue-soft) !important;
+  box-shadow:
+    0 0 0 1px var(--hl-blue-soft) inset,
+    0 12px 32px var(--hl-glow);
+}
+
+/* Portfolio cards */
+.portfolio-card {
+  transition: border-color .35s ease, box-shadow .35s ease, transform .35s ease;
+}
+.portfolio-card:hover {
+  border-color: var(--hl-blue-soft) !important;
+  box-shadow:
+    0 0 0 1px var(--hl-blue-soft) inset,
+    0 16px 40px var(--hl-glow);
+}
+
+/* Manifest items (Nosotros) */
+.nosotros-manifest li {
+  transition: border-color .35s ease, background-color .35s ease;
+  border-radius: 4px;
+  padding-left: clamp(.6rem, 1.2vw, 1rem);
+  padding-right: clamp(.6rem, 1.2vw, 1rem);
+  margin-left: calc(-1 * clamp(.6rem, 1.2vw, 1rem));
+  margin-right: calc(-1 * clamp(.6rem, 1.2vw, 1rem));
+}
+.nosotros-manifest li:hover {
+  border-bottom-color: var(--hl-blue-soft);
+  background: linear-gradient(90deg, var(--hl-glow) 0%, transparent 60%);
+}
+
+/* Stats cards (Nosotros) */
+.nosotros-stats li {
+  transition: border-color .35s ease, box-shadow .35s ease, background-color .35s ease;
+}
+.nosotros-stats li:hover {
+  border-color: var(--hl-blue-soft) !important;
+  box-shadow:
+    0 0 0 1px var(--hl-blue-soft) inset,
+    0 8px 22px var(--hl-glow);
+}
+
+/* Contact info items */
+.contacto-info li {
+  transition: border-color .35s ease, background-color .35s ease;
+  border-radius: 4px;
+  padding-left: .8rem;
+  padding-right: .8rem;
+  margin-left: -.8rem;
+  margin-right: -.8rem;
+}
+.contacto-info li:hover {
+  background: var(--hl-glow);
+  border-color: var(--hl-blue-soft);
+}
+
+/* Form fields focus ring (azul tambien) */
+.contacto-form input:focus,
+.contacto-form textarea:focus,
+.contacto-form select:focus {
+  outline: none;
+  border-color: var(--hl-blue) !important;
+  box-shadow: 0 0 0 3px var(--hl-glow);
 }

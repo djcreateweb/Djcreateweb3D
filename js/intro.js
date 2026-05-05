@@ -1,7 +1,7 @@
 /* ════════════════════════════════════════════════════════════
-   DJ CREATE 3D - Pantalla de carga v5.0
-   Canvas: wireframe cube + targeting rings + particle trails
-   Timeline: ~9.1s total
+   DJ CREATE 3D - Pantalla de carga v6.0
+   Canvas: soft targeting field + particle trails
+   Timeline: ~7.8s total
    ════════════════════════════════════════════════════════════ */
 (function () {
   'use strict';
@@ -72,13 +72,13 @@
   var br = el('div', { className: 'ico ico--br' }); br.appendChild(svgCorner('#3D9DFF')); hud.appendChild(br);
 
   var ibt = el('div', { className: 'ib ib--t' });
-  var tagA = el('span', { className: 'itag' }); tagA.textContent = 'SYS.ACQUIRE · v5.0';
+  var tagA = el('span', { className: 'itag' }); tagA.textContent = 'DJ.CREATE · v6.0';
   var tagB = el('span', { className: 'itag' }); tagB.textContent = '37°59\'N  1°07\'W · MURCIA';
   var tagT = el('span', { className: 'itag itimer', id: 'itimer' }); tagT.textContent = '00:000';
   ibt.appendChild(tagA); ibt.appendChild(tagB); ibt.appendChild(tagT);
 
   var ibb = el('div', { className: 'ib ib--b' });
-  var tagC = el('span', { className: 'itag' }); tagC.textContent = 'WEB.DESIGN.3D.STUDIO';
+  var tagC = el('span', { className: 'itag' }); tagC.textContent = 'BESPOKE.WEB.EXPERIENCE';
   var tagD = el('span', { className: 'itag' }); tagD.textContent = 'EST.2024';
   ibb.appendChild(tagC); ibb.appendChild(tagD);
 
@@ -90,6 +90,8 @@
 
   // Central stage
   var stage = el('div', { className: 'is', id: 'is' });
+  var status = el('p', { className: 'istat' });
+  status.textContent = 'Cargando escena inicial';
 
   var djw  = el('div', { className: 'idj-w', id: 'idjw' });
   var djTx = el('span', { className: 'idj' }); djTx.textContent = 'DJ';
@@ -101,7 +103,6 @@
   var crTx = el('span', { className: 'icr' });
   'Create'.split('').forEach(function(ch, i) {
     var lt = el('span', { className: 'letter' });
-    if (i < 5) { lt.style.marginRight = '-.08em'; }
     lt.appendChild(document.createTextNode(ch));
     crTx.appendChild(lt);
   });
@@ -130,8 +131,16 @@
   stage.appendChild(shm);
   stage.appendChild(iln);
   stage.appendChild(sub);
+  stage.appendChild(status);
   stage.appendChild(load);
   root.appendChild(stage);
+
+  var aperture = el('div', { className: 'iaperture' });
+  var curtainTop = el('div', { className: 'icurtain icurtain--top' });
+  var curtainBot = el('div', { className: 'icurtain icurtain--bot' });
+  root.appendChild(aperture);
+  root.appendChild(curtainTop);
+  root.appendChild(curtainBot);
 
   document.body.prepend(root);
   document.documentElement.classList.add('intro-active');
@@ -410,11 +419,11 @@
     var heroContent = document.getElementById('heroContent');
     var heroEls = heroContent ? Array.prototype.slice.call(heroContent.children) : [];
 
-    // Hero section: fade + blur + scale (covers canvas too)
+    // Hero section: aparece debajo de la apertura de lente.
     if (revealHero) {
       revealHero.style.opacity         = '0';
-      revealHero.style.filter          = 'blur(20px) brightness(.82) saturate(1.15)';
-      revealHero.style.transform       = 'translateY(28px) scale(1.028)';
+      revealHero.style.filter          = 'blur(24px) brightness(.68) saturate(1.22)';
+      revealHero.style.transform       = 'translateY(42px) scale(1.045)';
       revealHero.style.transformOrigin = 'center top';
       revealHero.style.transition      = 'none';
     }
@@ -446,9 +455,9 @@
         // Hero section reveal
         if (revealHero) {
           revealHero.style.transition =
-            'opacity 1.6s cubic-bezier(.16,1,.3,1),' +
-            'filter 1.6s cubic-bezier(.16,1,.3,1),' +
-            'transform 1.6s cubic-bezier(.16,1,.3,1)';
+            'opacity 1.85s cubic-bezier(.16,1,.3,1),' +
+            'filter 2.1s cubic-bezier(.16,1,.3,1),' +
+            'transform 2.1s cubic-bezier(.16,1,.3,1)';
           revealHero.style.opacity   = '1';
           revealHero.style.filter    = 'blur(0) brightness(1) saturate(1)';
           revealHero.style.transform = 'translateY(0) scale(1)';
@@ -457,9 +466,9 @@
         // Nav reveal
         if (revealNav) {
           revealNav.style.transition =
-            'opacity 1.1s cubic-bezier(.16,1,.3,1) .12s,' +
-            'filter 1.1s cubic-bezier(.16,1,.3,1) .12s,' +
-            'transform 1.1s cubic-bezier(.16,1,.3,1) .12s';
+            'opacity 1.2s cubic-bezier(.16,1,.3,1) .34s,' +
+            'filter 1.2s cubic-bezier(.16,1,.3,1) .34s,' +
+            'transform 1.2s cubic-bezier(.16,1,.3,1) .34s';
           revealNav.style.opacity   = '1';
           revealNav.style.filter    = 'blur(0)';
           revealNav.style.transform = 'translateX(-50%) translateY(0)';
@@ -470,11 +479,11 @@
           var d = (i * 130 + 80) + 'ms';
           var isTitle = child.classList.contains('hero-title');
           child.style.transition =
-            'transform 1.05s cubic-bezier(.16,1,.3,1) ' + d + ',' +
-            'filter .85s cubic-bezier(.16,1,.3,1) ' + d +
+            'transform 1.35s cubic-bezier(.16,1,.3,1) ' + d + ',' +
+            'filter 1.1s cubic-bezier(.16,1,.3,1) ' + d +
             (isTitle
-              ? ',clip-path 1.5s cubic-bezier(.16,1,.3,1) ' + d +
-                ',-webkit-clip-path 1.5s cubic-bezier(.16,1,.3,1) ' + d
+              ? ',clip-path 1.8s cubic-bezier(.16,1,.3,1) ' + d +
+                ',-webkit-clip-path 1.8s cubic-bezier(.16,1,.3,1) ' + d
               : '');
           child.style.transform = 'translateY(0)';
           child.style.filter    = 'blur(0)';
@@ -516,67 +525,70 @@
     if (revealBeam) revealBeam.remove();
   }
 
-  // -- SEQUENCE (~9.1s total) -----------------------------------
+  var introDone = false;
+  function finishIntro() {
+    if (introDone) return;
+    introDone = true;
+    alive      = false;
+    timerAlive = false;
+    cancelAnimationFrame(rafId);
+    window.removeEventListener('resize', handleResize);
+    document.documentElement.classList.remove('intro-active');
+    document.body.classList.remove('intro-active');
+    if (root.parentNode) root.remove();
+    setTimeout(clearPageReveal, 700);
+  }
 
-  // T+450: rings + cube fade in
+  // -- SEQUENCE (~7.8s total) -----------------------------------
+
+  // T+350: rings + cube fade in
   setTimeout(function() {
     fadeIn(ringProxy, 0, 1, 900);
     fadeIn(cubeProxy, 0, 1, 1100);
-  }, 450);
+  }, 350);
 
-  // T+1200: DJ slams up
-  setTimeout(function() { djw.classList.add('is-in'); }, 1200);
+  // T+900: DJ mark appears
+  setTimeout(function() { djw.classList.add('is-in'); }, 900);
 
-  // T+1400: glitch flash on DJ (200ms into its entry)
-  setTimeout(function() {
-    djTx.classList.add('glitch-flash');
-    setTimeout(function() { djTx.classList.remove('glitch-flash'); }, 360);
-  }, 1400);
-
-  // T+1900: Create sweeps in + divider appears
+  // T+1320: Create appears
   setTimeout(function() {
     crw.classList.add('is-in');
     idiv.classList.add('is-in');
-  }, 1900);
+  }, 1320);
 
-  // T+3100: glitch flash on Create (una vez visible)
-  setTimeout(function() {
-    crTx.classList.add('glitch-flash');
-    setTimeout(function() { crTx.classList.remove('glitch-flash'); }, 360);
-  }, 3100);
+  // T+1900: shimmer line
+  setTimeout(function() { shm.classList.add('is-run'); }, 1900);
 
-  // T+2400: shimmer line
-  setTimeout(function() { shm.classList.add('is-run'); }, 2400);
-
-  // T+2750: lock-on pulse + wordmark light scan
+  // T+2260: lock-on pulse + wordmark light scan
   setTimeout(function() {
     lockPulse = 1;
     root.classList.add('is-lock');
     wmw.classList.add('is-scan');
     setTimeout(function() { root.classList.remove('is-lock'); }, 700);
     setTimeout(function() { wmw.classList.remove('is-scan'); }, 1400);
-  }, 2750);
+  }, 2260);
 
-  // T+3350: subtitle typewriter
+  // T+2700: subtitle typewriter
   setTimeout(function() {
     sub.classList.add('is-in');
-    var text = 'ESTUDIO DE DISEÑO WEB · EXPERIENCIAS 3D';
+    status.classList.add('is-in');
+    var text = 'ESTUDIO DE DISEÑO WEB · MURCIA';
     sub.textContent = '';
     text.split('').forEach(function(ch, i) {
-      setTimeout(function() { sub.textContent += ch; }, i * 42);
+      setTimeout(function() { sub.textContent += ch; }, i * 32);
     });
-  }, 3350);
+  }, 2700);
 
-  // T+3850: loading bar appears
-  setTimeout(function() { load.classList.add('is-in'); }, 3850);
+  // T+3260: loading bar appears
+  setTimeout(function() { load.classList.add('is-in'); }, 3260);
 
-  // T+4150: progress bar fills (1.35s) + percentage counter
+  // T+3500: progress bar fills + percentage counter
   setTimeout(function() {
-    pfill.style.transition = 'width 1.35s cubic-bezier(.25,.46,.45,.94)';
+    pfill.style.transition = 'width 1.2s cubic-bezier(.25,.46,.45,.94)';
     pfill.style.width      = '100%';
     var pctEl    = document.getElementById('ipct');
     var pctStart = performance.now();
-    var pctDur   = 1350;
+    var pctDur   = 1200;
     (function animPct() {
       var t     = Math.min(1, (performance.now() - pctStart) / pctDur);
       var eased = t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
@@ -584,43 +596,38 @@
       if (t < 1) requestAnimationFrame(animPct);
       else if (pctEl) pctEl.textContent = '100%';
     })();
-  }, 4150);
+  }, 3500);
 
-  // T+5300: stage evaporates + rings + cube + HUD fade
+  // T+4900: stage collapses into the lens
   setTimeout(function() {
-    stage.style.transition = 'opacity 1s cubic-bezier(.25,.46,.45,.94), transform 1s cubic-bezier(.25,.46,.45,.94), filter 1s cubic-bezier(.25,.46,.45,.94)';
+    root.classList.add('is-arming');
+    stage.style.transition = 'opacity .85s cubic-bezier(.25,.46,.45,.94), transform .95s cubic-bezier(.16,1,.3,1), filter .95s cubic-bezier(.16,1,.3,1)';
     stage.style.opacity    = '0';
-    stage.style.transform  = 'translate(-50%, -50%) scale(1.035)';
-    stage.style.filter     = 'blur(14px)';
+    stage.style.transform  = 'translate(-50%, -50%) scale(.92)';
+    stage.style.filter     = 'blur(18px) brightness(1.35)';
     fadeIn(ringProxy, ringA, 0, 1000);
     fadeIn(cubeProxy, cubeAlpha, 0, 800);
     root.querySelectorAll('.ib, .ico, .itks').forEach(function(e) {
       e.style.transition = 'opacity .8s ease';
       e.style.opacity    = '0';
     });
-  }, 5300);
+  }, 4900);
 
-  // T+6000: cinematic bloom
-  setTimeout(function() { root.classList.add('is-revealing'); }, 6000);
+  // T+5400: prepare page under the loader
+  setTimeout(function() { preparePageReveal(); }, 5400);
 
-  // T+7000: flash
+  // T+5750: cinematic bloom
+  setTimeout(function() { root.classList.add('is-revealing'); }, 5750);
+
+  // T+6100: flash
   setTimeout(function() {
     var flash = document.createElement('div');
     flash.className = 'iflash';
     root.appendChild(flash);
     setTimeout(function() { flash.remove(); }, 700);
-  }, 7000);
+  }, 6100);
 
-  // T+6900: page starts fading in antes del slide-up (250ms de margen)
-  setTimeout(function() { preparePageReveal(); }, 6900);
-
-  // T+7180: anticipation glitch tear (RGB+shake)
-  setTimeout(function() {
-    root.classList.add('is-tear');
-    setTimeout(function() { root.classList.remove('is-tear'); }, 240);
-  }, 7180);
-
-  // T+7350: shockwaves + TV-off wipe-out (1.15s → done at T+8500)
+  // T+6320: aperture opens and the first page takes focus
   setTimeout(function() {
     var shock1 = document.createElement('div');
     shock1.className = 'ishock';
@@ -628,20 +635,16 @@
     var shock2 = document.createElement('div');
     shock2.className = 'ishock ishock--late';
     root.appendChild(shock2);
-    setTimeout(function() { shock1.remove(); shock2.remove(); }, 1500);
+    root.classList.add('is-opening');
+    setTimeout(function() { shock1.remove(); shock2.remove(); }, 1800);
+    root.addEventListener('animationend', function onIntroExit(evt) {
+      if (evt.target === root && evt.animationName === 'dji-exit') {
+        root.removeEventListener('animationend', onIntroExit);
+        finishIntro();
+      }
+    });
     root.classList.add('is-out');
-  }, 7350);
-
-  // T+8700: cleanup
-  setTimeout(function() {
-    alive      = false;
-    timerAlive = false;
-    cancelAnimationFrame(rafId);
-    window.removeEventListener('resize', handleResize);
-    document.documentElement.classList.remove('intro-active');
-    document.body.classList.remove('intro-active');
-    root.remove();
-    setTimeout(clearPageReveal, 600);
-  }, 8700);
+    setTimeout(finishIntro, 1900);
+  }, 6320);
 
 })();
