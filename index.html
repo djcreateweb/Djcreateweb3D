@@ -14,6 +14,31 @@
 </head>
 <body>
 
+  <!-- DJ CREATE PRELOADER — capas en /djcreate_layers/ -->
+  <div id="dj-preloader" class="dj-preloader" aria-hidden="true">
+    <div class="dj-curtain dj-curtain-left">
+      <img src="djcreate_layers/01_fondo_carga_sin_recuadro.png" alt="">
+    </div>
+    <div class="dj-curtain dj-curtain-right">
+      <img src="djcreate_layers/01_fondo_carga_sin_recuadro.png" alt="">
+    </div>
+
+    <div class="dj-intro-content">
+      <img class="dj-layer dj-card-layer"      src="djcreate_layers/02_recuadro_glass.png"     alt="">
+      <img class="dj-layer dj-logo-layer"      src="djcreate_layers/03_logo_dj_create.png"     alt="DJ Create">
+      <img class="dj-layer dj-text-top-layer"  src="djcreate_layers/04_textos_superiores.png"  alt="">
+      <img class="dj-layer dj-text-load-layer" src="djcreate_layers/05_textos_carga.png"       alt="">
+
+      <div class="dj-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+        <div class="dj-progress-fill"></div>
+      </div>
+
+      <div class="dj-progress-percent">
+        Cargando<span id="dj-percent">0%</span>
+      </div>
+    </div>
+  </div>
+
   <!-- Gradient defs — separados del intro para que sigan activos en nav/footer -->
   <svg width="0" height="0" style="position:absolute;pointer-events:none" aria-hidden="true">
     <defs>
