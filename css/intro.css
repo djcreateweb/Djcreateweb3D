@@ -33,13 +33,15 @@ body.dj-loader-active { overflow: hidden; }
   --edge:           rgba(255, 255, 255, 0.04);
 
   /* ───── Timeline ─────
-     Entrada:  0.0s → 3.0s  (3s)
-     Salida:   3.0s → 5.0s  (2s)
-     Cortina:  5.0s → 7.0s  (2s) */
+     Entrada:  0.0s → 1.5s  (1.5s)
+     Visible:  1.5s → 2.5s  (1s)
+     Salida:   2.5s → 3.0s  (0.5s)
+     Telon:    3.0s → 5.0s  (2s)
+     TOTAL:    5s */
   --t-in-start:     0.05s;
-  --t-out-start:    3.00s;
-  --t-curtain:      5.00s;
-  --t-iris:         5.00s;
+  --t-out-start:    2.50s;
+  --t-curtain:      3.00s;
+  --t-curtain-dur:  2.00s;
 
   /* Root */
   position: fixed;
@@ -76,22 +78,6 @@ body.dj-loader-active { overflow: hidden; }
   overflow: hidden;
 }
 
-#dj-loader-root .dj-loader-reveal-ring {
-  position: absolute;
-  top: 50%; left: 50%;
-  width: 8px; height: 8px;
-  border: 1px solid var(--cyan);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  opacity: 0;
-  animation: dj-loader-reveal-ring 1.6s calc(var(--t-curtain) + 1.0s) ease-out forwards;
-}
-#dj-loader-root .dj-loader-reveal-ring:nth-of-type(2) { animation-delay: calc(var(--t-curtain) + 1.2s); border-color: var(--magenta); }
-#dj-loader-root .dj-loader-reveal-ring:nth-of-type(3) { animation-delay: calc(var(--t-curtain) + 1.4s); }
-@keyframes dj-loader-reveal-ring {
-  0%   { opacity: 0.8; transform: translate(-50%, -50%) scale(1);  }
-  100% { opacity: 0;   transform: translate(-50%, -50%) scale(40); }
-}
 
 /* ====================================================
    CORTINA — dos mitades con overflow hidden
@@ -174,209 +160,6 @@ body.dj-loader-active { overflow: hidden; }
   0%   { transform: translateX(0)       scale(1)    ; filter: brightness(1); }
   20%  { transform: translateX(2%)      scale(1.01) ; filter: brightness(1.1); }
   100% { transform: translateX(100%)    scale(0.92) ; filter: brightness(0.7); }
-}
-
-/* ====================================================
-   LIGHT BEAM — haz de luz central que precede a la cortina
-   ==================================================== */
-#dj-loader-root .dj-loader-beam {
-  position: absolute;
-  top: 0; bottom: 0; left: 50%;
-  width: 2px;
-  transform: translateX(-50%) scaleY(0);
-  transform-origin: center;
-  background: linear-gradient(180deg,
-    transparent 0%,
-    rgba(94, 229, 216, 0.8) 20%,
-    rgba(255, 255, 255, 1) 50%,
-    rgba(217, 70, 239, 0.8) 80%,
-    transparent 100%);
-  box-shadow:
-    0 0 20px rgba(94, 229, 216, 0.8),
-    0 0 60px rgba(94, 229, 216, 0.5),
-    0 0 100px rgba(217, 70, 239, 0.4);
-  z-index: 3;
-  opacity: 0;
-  animation: dj-loader-beam-sequence 2.0s var(--t-curtain) ease-out forwards;
-  will-change: transform, opacity, width;
-}
-@keyframes dj-loader-beam-sequence {
-  0%   { opacity: 0; transform: translateX(-50%) scaleY(0);    width: 2px; }
-  8%   { opacity: 1; transform: translateX(-50%) scaleY(1);    width: 2px; }
-  16%  { opacity: 1; transform: translateX(-50%) scaleY(1);    width: 2px; }
-  25%  { opacity: 1; transform: translateX(-50%) scaleY(1);    width: 6px; }
-  50%  { opacity: 0.6; width: 4px; }
-  100% { opacity: 0; transform: translateX(-50%) scaleY(1);    width: 2px; }
-}
-
-#dj-loader-root .dj-loader-beam-halo {
-  position: absolute;
-  top: 50%; left: 50%;
-  width: 4px; height: 4px;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,255,255,0.9), rgba(94,229,216,0.4) 30%, transparent 70%);
-  z-index: 4;
-  opacity: 0;
-  animation: dj-loader-halo-flash 1.0s calc(var(--t-curtain) + 0.10s) ease-out forwards;
-}
-@keyframes dj-loader-halo-flash {
-  0%   { opacity: 0; width: 4px;   height: 4px; }
-  30%  { opacity: 1; width: 200px; height: 200px; }
-  100% { opacity: 0; width: 600px; height: 600px; }
-}
-
-#dj-loader-root .dj-loader-iris {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  border: 1px solid rgba(244, 241, 234, 0.22);
-  box-shadow:
-    0 0 0 200vmax #000,
-    0 0 34px rgba(94, 229, 216, 0.34),
-    0 0 84px rgba(217, 70, 239, 0.18),
-    inset 0 0 42px rgba(94, 229, 216, 0.12);
-  opacity: 0;
-  pointer-events: none;
-  z-index: 30;
-  animation: dj-loader-iris-cover 6s var(--t-iris) linear forwards;
-}
-
-#dj-loader-root .dj-loader-iris::before {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  border-radius: inherit;
-  border: 1px solid rgba(94, 229, 216, 0.38);
-  box-shadow:
-    0 0 18px rgba(94, 229, 216, 0.32),
-    0 0 28px rgba(217, 70, 239, 0.16);
-  opacity: 0;
-  animation: dj-loader-iris-ring 6s var(--t-iris) ease-out forwards;
-}
-
-@keyframes dj-loader-iris-cover {
-  0% {
-    opacity: 1;
-    width: 0;
-    height: 0;
-    box-shadow:
-      0 0 0 200vmax #000,
-      0 0 18px rgba(94, 229, 216, 0.18),
-      0 0 54px rgba(217, 70, 239, 0.10),
-      inset 0 0 24px rgba(94, 229, 216, 0.08);
-  }
-  10% {
-    opacity: 1;
-    width: 8vmax;
-    height: 8vmax;
-    box-shadow:
-      0 0 0 200vmax #000,
-      0 0 34px rgba(94, 229, 216, 0.34),
-      0 0 84px rgba(217, 70, 239, 0.18),
-      inset 0 0 42px rgba(94, 229, 216, 0.12);
-  }
-  20% {
-    opacity: 1;
-    width: 16vmax;
-    height: 16vmax;
-    box-shadow:
-      0 0 0 200vmax #000,
-      0 0 34px rgba(94, 229, 216, 0.34),
-      0 0 84px rgba(217, 70, 239, 0.18),
-      inset 0 0 42px rgba(94, 229, 216, 0.12);
-  }
-  30% {
-    opacity: 1;
-    width: 25vmax;
-    height: 25vmax;
-    box-shadow:
-      0 0 0 200vmax #000,
-      0 0 34px rgba(94, 229, 216, 0.34),
-      0 0 84px rgba(217, 70, 239, 0.18),
-      inset 0 0 42px rgba(94, 229, 216, 0.12);
-  }
-  40% {
-    opacity: 1;
-    width: 35vmax;
-    height: 35vmax;
-    box-shadow:
-      0 0 0 200vmax #000,
-      0 0 34px rgba(94, 229, 216, 0.34),
-      0 0 84px rgba(217, 70, 239, 0.18),
-      inset 0 0 42px rgba(94, 229, 216, 0.12);
-  }
-  50% {
-    opacity: 1;
-    width: 47vmax;
-    height: 47vmax;
-    box-shadow:
-      0 0 0 200vmax #000,
-      0 0 34px rgba(94, 229, 216, 0.34),
-      0 0 84px rgba(217, 70, 239, 0.18),
-      inset 0 0 42px rgba(94, 229, 216, 0.12);
-  }
-  60% {
-    opacity: 1;
-    width: 60vmax;
-    height: 60vmax;
-    box-shadow:
-      0 0 0 200vmax #000,
-      0 0 34px rgba(94, 229, 216, 0.34),
-      0 0 84px rgba(217, 70, 239, 0.18),
-      inset 0 0 42px rgba(94, 229, 216, 0.12);
-  }
-  70% {
-    opacity: 1;
-    width: 75vmax;
-    height: 75vmax;
-    box-shadow:
-      0 0 0 200vmax #000,
-      0 0 34px rgba(94, 229, 216, 0.34),
-      0 0 84px rgba(217, 70, 239, 0.18),
-      inset 0 0 42px rgba(94, 229, 216, 0.12);
-  }
-  80% {
-    opacity: 1;
-    width: 92vmax;
-    height: 92vmax;
-    box-shadow:
-      0 0 0 200vmax #000,
-      0 0 34px rgba(94, 229, 216, 0.34),
-      0 0 84px rgba(217, 70, 239, 0.18),
-      inset 0 0 42px rgba(94, 229, 216, 0.12);
-  }
-  90% {
-    opacity: 1;
-    width: 110vmax;
-    height: 110vmax;
-    box-shadow:
-      0 0 0 200vmax #000,
-      0 0 34px rgba(94, 229, 216, 0.34),
-      0 0 84px rgba(217, 70, 239, 0.18),
-      inset 0 0 42px rgba(94, 229, 216, 0.12);
-  }
-  100% {
-    opacity: 0;
-    width: 130vmax;
-    height: 130vmax;
-    box-shadow:
-      0 0 0 0 #000,
-      0 0 0 rgba(94, 229, 216, 0),
-      0 0 0 rgba(217, 70, 239, 0),
-      inset 0 0 0 rgba(94, 229, 216, 0);
-  }
-}
-
-@keyframes dj-loader-iris-ring {
-  0%   { opacity: 0; transform: scale(0.86); }
-  16%  { opacity: 0.85; transform: scale(1); }
-  76%  { opacity: 0.45; }
-  100% { opacity: 0; transform: scale(1.015); }
 }
 
 /* ====================================================
@@ -703,7 +486,7 @@ body.dj-loader-active { overflow: hidden; }
   transform: translateX(-34px) skewX(-8deg);
   filter: blur(20px);
   will-change: transform, filter, opacity;
-  animation: dj-loader-letter-sweep .72s calc(var(--t-in-start) + .72s + var(--char-delay)) cubic-bezier(.16,.84,.24,1) forwards;
+  animation: dj-loader-letter-sweep .55s calc(var(--t-in-start) + .35s + var(--char-delay)) cubic-bezier(.16,.84,.24,1) forwards;
 }
 
 #dj-loader-root .dj-loader-divider {
@@ -798,7 +581,7 @@ body.dj-loader-active { overflow: hidden; }
   width: 0%;
   background: linear-gradient(90deg, var(--cyan), var(--magenta));
   box-shadow: 0 0 8px rgba(94, 229, 216, 0.4);
-  animation: dj-loader-load 2.6s calc(var(--t-in-start) + 0.4s) cubic-bezier(.2,.7,.3,1) forwards;
+  animation: dj-loader-load 1.6s calc(var(--t-in-start) + 0.4s) cubic-bezier(.2,.7,.3,1) forwards;
 }
 @keyframes dj-loader-load { 0% { width: 0%; } 100% { width: 100%; } }
 
@@ -881,80 +664,65 @@ body.dj-loader-active { overflow: hidden; }
 }
 
 /* ====================================================
-   ASIGNACIÓN — entrada (3s total) + salida (2s total)
+   ASIGNACIÓN — entrada (1.5s) + salida (0.5s)  TOTAL 5s
    ==================================================== */
 #dj-loader-root .dj-loader-topbar .dj-loader-left {
   opacity: 0;
   animation:
-    dj-loader-in-slide-left 1.0s var(--t-in-start)                    cubic-bezier(.2,.8,.2,1) forwards,
-    dj-loader-out-fade-up   0.6s calc(var(--t-out-start) + 1.10s)      cubic-bezier(.5,0,.7,.4) forwards;
+    dj-loader-in-slide-left 0.7s var(--t-in-start)                    cubic-bezier(.2,.8,.2,1) forwards,
+    dj-loader-out-fade-up   0.4s calc(var(--t-out-start) + 0.20s)      cubic-bezier(.5,0,.7,.4) forwards;
 }
 #dj-loader-root .dj-loader-topbar .dj-loader-center {
   opacity: 0;
   animation:
-    dj-loader-in-pop        1.0s calc(var(--t-in-start) + 0.30s)       cubic-bezier(.4,1.6,.4,1) forwards,
-    dj-loader-out-pop-down  0.6s calc(var(--t-out-start) + 0.95s)      cubic-bezier(.5,0,.7,.4) forwards;
+    dj-loader-in-pop        0.7s calc(var(--t-in-start) + 0.10s)       cubic-bezier(.4,1.6,.4,1) forwards,
+    dj-loader-out-pop-down  0.4s calc(var(--t-out-start) + 0.15s)      cubic-bezier(.5,0,.7,.4) forwards;
 }
 #dj-loader-root .dj-loader-topbar .dj-loader-right {
   opacity: 0;
   animation:
-    dj-loader-in-slide-right 1.0s calc(var(--t-in-start) + 0.55s)      cubic-bezier(.2,.8,.2,1) forwards,
-    dj-loader-out-fade-up    0.6s calc(var(--t-out-start) + 1.10s)     cubic-bezier(.5,0,.7,.4) forwards;
+    dj-loader-in-slide-right 0.7s calc(var(--t-in-start) + 0.20s)      cubic-bezier(.2,.8,.2,1) forwards,
+    dj-loader-out-fade-up    0.4s calc(var(--t-out-start) + 0.20s)     cubic-bezier(.5,0,.7,.4) forwards;
 }
 
 #dj-loader-root .dj-loader-logo {
   opacity: 1;
   animation:
-    dj-loader-out-blur-zoom  1.0s calc(var(--t-out-start) + 0.85s)     cubic-bezier(.6,.05,.85,.5) forwards;
+    dj-loader-out-blur-zoom  0.5s calc(var(--t-out-start) + 0.10s)     cubic-bezier(.6,.05,.85,.5) forwards;
   will-change: transform, filter, opacity;
 }
 
 #dj-loader-root .dj-loader-divider {
   opacity: 0;
   animation:
-    dj-loader-in-expand-x    1.0s calc(var(--t-in-start) + 1.40s)      cubic-bezier(.4,0,.2,1) forwards,
-    dj-loader-out-collapse-x 0.6s calc(var(--t-out-start) + 0.55s)     cubic-bezier(.5,0,.7,.4) forwards;
+    dj-loader-in-expand-x    0.7s calc(var(--t-in-start) + 0.45s)      cubic-bezier(.4,0,.2,1) forwards,
+    dj-loader-out-collapse-x 0.4s var(--t-out-start)                    cubic-bezier(.5,0,.7,.4) forwards;
 }
 
 #dj-loader-root .dj-loader-tagline {
   opacity: 0;
   animation:
-    dj-loader-in-fade-up    1.0s calc(var(--t-in-start) + 1.70s)       cubic-bezier(.2,.7,.2,1) forwards,
-    dj-loader-out-fade-down 0.6s calc(var(--t-out-start) + 0.30s)      cubic-bezier(.5,0,.7,.4) forwards;
+    dj-loader-in-fade-up    0.7s calc(var(--t-in-start) + 0.55s)       cubic-bezier(.2,.7,.2,1) forwards,
+    dj-loader-out-fade-down 0.4s calc(var(--t-out-start) + 0.05s)      cubic-bezier(.5,0,.7,.4) forwards;
 }
 
 #dj-loader-root .dj-loader-footer-block .dj-loader-left {
   opacity: 0;
   animation:
-    dj-loader-in-fade-up-from-bottom-left 1.0s calc(var(--t-in-start) + 2.00s) cubic-bezier(.2,.7,.2,1) forwards,
-    dj-loader-out-slide-left              0.7s var(--t-out-start)               cubic-bezier(.5,0,.7,.4) forwards;
+    dj-loader-in-fade-up-from-bottom-left 0.7s calc(var(--t-in-start) + 0.65s) cubic-bezier(.2,.7,.2,1) forwards,
+    dj-loader-out-slide-left              0.4s var(--t-out-start)               cubic-bezier(.5,0,.7,.4) forwards;
 }
 #dj-loader-root .dj-loader-status {
   opacity: 0;
   animation:
-    dj-loader-in-fade        1.0s calc(var(--t-in-start) + 2.15s)      ease-out forwards,
-    dj-loader-out-blur-zoom  0.7s calc(var(--t-out-start) + 0.60s)     cubic-bezier(.5,0,.7,.4) forwards;
+    dj-loader-in-fade        0.7s calc(var(--t-in-start) + 0.75s)      ease-out forwards,
+    dj-loader-out-blur-zoom  0.4s calc(var(--t-out-start) + 0.10s)     cubic-bezier(.5,0,.7,.4) forwards;
 }
 #dj-loader-root .dj-loader-footer-block .dj-loader-right {
   opacity: 0;
   animation:
-    dj-loader-in-fade-up-from-bottom-right 1.0s calc(var(--t-in-start) + 2.30s) cubic-bezier(.2,.7,.2,1) forwards,
-    dj-loader-out-slide-right              0.7s calc(var(--t-out-start) + 0.10s) cubic-bezier(.5,0,.7,.4) forwards;
-}
-
-#dj-loader-root.dj-loader-blackout .dj-loader-reveal,
-#dj-loader-root.dj-loader-blackout .dj-loader-curtain,
-#dj-loader-root.dj-loader-blackout .dj-loader-stage,
-#dj-loader-root.dj-loader-blackout .dj-loader-frame,
-#dj-loader-root.dj-loader-blackout .dj-loader-grain,
-#dj-loader-root.dj-loader-blackout .dj-loader-beam,
-#dj-loader-root.dj-loader-blackout .dj-loader-beam-halo {
-  opacity: 0 !important;
-  transition: opacity 0.35s ease-out;
-}
-
-#dj-loader-root.dj-loader-opening {
-  background: transparent;
+    dj-loader-in-fade-up-from-bottom-right 0.7s calc(var(--t-in-start) + 0.85s) cubic-bezier(.2,.7,.2,1) forwards,
+    dj-loader-out-slide-right              0.4s calc(var(--t-out-start) + 0.05s) cubic-bezier(.5,0,.7,.4) forwards;
 }
 
 /* ---------- MOBILE ---------- */

@@ -22,11 +22,7 @@
   <div id="dj-loader-root" class="dj-loader-root" aria-hidden="true">
 
     <!-- Capa final revelada tras la cortina -->
-    <div class="dj-loader-reveal">
-      <div class="dj-loader-reveal-ring"></div>
-      <div class="dj-loader-reveal-ring"></div>
-      <div class="dj-loader-reveal-ring"></div>
-    </div>
+    <div class="dj-loader-reveal"></div>
 
     <!-- CORTINA: dos mitades con el bg-art duplicado -->
     <div class="dj-loader-curtain">
@@ -71,9 +67,6 @@
     </div>
 
     <!-- Beam y halo -->
-    <div class="dj-loader-beam"></div>
-    <div class="dj-loader-beam-halo"></div>
-    <div class="dj-loader-iris" aria-hidden="true"></div>
 
     <div class="dj-loader-grain"></div>
 
@@ -147,16 +140,12 @@
       document.body.classList.add('dj-loader-active');
       window.scrollTo(0, 0);
 
-      setTimeout(function () {
-        loader.classList.add('dj-loader-blackout');
-        loader.classList.add('dj-loader-opening');
-        window.scrollTo(0, 0);
-      }, 5000);
-
+      // T+4.5s — libera clicks durante los últimos 0.5s del telón
       setTimeout(function () {
         loader.style.pointerEvents = 'none';
-      }, 10500);
+      }, 4500);
 
+      // T+5.0s — total exacto: removeChild y libera scroll
       setTimeout(function () {
         document.documentElement.classList.remove('dj-loader-active');
         document.body.classList.remove('dj-loader-active');
@@ -165,7 +154,7 @@
         requestAnimationFrame(function () {
           window.scrollTo(0, 0);
         });
-      }, 11200);
+      }, 5000);
     })();
   </script>
 
