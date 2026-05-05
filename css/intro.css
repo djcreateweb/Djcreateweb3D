@@ -9,16 +9,16 @@ html.dj-loader-active,
 body.dj-loader-active { overflow: hidden; }
 
 #dj-loader-root {
-  /* ───── Tokens ───── */
-  --bg-0:           #0a0a0c;
-  --bg-1:           #111114;
-  --bg-2:           #16161b;
+  /* ───── Tokens — paleta editorial navy-ink con contraste ───── */
+  --bg-0:           #08101e;
+  --bg-1:           #131c33;
+  --bg-2:           #1d2942;
 
-  --plane-a:        #1a1a20;
-  --plane-b:        #15151a;
-  --plane-c:        #131317;
-  --plane-d:        #181820;
-  --plane-e:        #0f0f13;
+  --plane-a:        #283655;
+  --plane-b:        #1c2742;
+  --plane-c:        #161f37;
+  --plane-d:        #21304f;
+  --plane-e:        #0d1428;
 
   --ink:            #f4f1ea;
   --ink-soft:       #c9c5bc;
