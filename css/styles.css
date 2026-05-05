@@ -2084,7 +2084,14 @@ button:focus-visible {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  /* Reduce motion site-wide EXCEPTO el loader del intro
+     (#dj-loader-root) que dura solo 5s y transmite estado de
+     carga. Sin esta exclusión, el telón de 3s se reducía a
+     0.01ms y la animación no era perceptible. */
+  body > *:not(#dj-loader-root),
+  body > *:not(#dj-loader-root) *,
+  body > *:not(#dj-loader-root) *::before,
+  body > *:not(#dj-loader-root) *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
