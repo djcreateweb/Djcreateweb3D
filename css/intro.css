@@ -87,18 +87,25 @@ body.dj-loader-active { overflow: hidden; }
   inset: 0;
   z-index: 1;
 }
-/* Cada mitad mide 50vw + 1px para que se solapen 1px en el
-   centro y NO se vea ninguna costura/línea por subpixel rounding.
-   Ambas tienen el mismo bg-art, así que el solape es invisible. */
+/* CORTINA DIAGONAL — dos triángulos full-screen con clip-path
+   que se separan hacia esquinas opuestas (NE y SW).
+   La diagonal del corte va de la esquina superior-izquierda a
+   la inferior-derecha. Los dos triángulos comparten esa diagonal
+   y juntos cubren la pantalla sin costura visible. */
 #dj-loader-root .dj-loader-curtain-half {
   position: absolute;
-  top: 0;
-  height: 100vh;
-  width: calc(50vw + 1px);
-  overflow: hidden;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
-#dj-loader-root .dj-loader-curtain-half.dj-loader-left  { left: 0; }
-#dj-loader-root .dj-loader-curtain-half.dj-loader-right { right: 0; }
+/* Triángulo NE (superior-derecho): vértices TL, TR, BR */
+#dj-loader-root .dj-loader-curtain-half.dj-loader-tr {
+  clip-path: polygon(0 0, 100% 0, 100% 100%);
+}
+/* Triángulo SW (inferior-izquierdo): vértices TL, BR, BL */
+#dj-loader-root .dj-loader-curtain-half.dj-loader-bl {
+  clip-path: polygon(0 0, 100% 100%, 0 100%);
+}
 
 #dj-loader-root .dj-loader-curtain-content {
   position: absolute;
@@ -107,29 +114,28 @@ body.dj-loader-active { overflow: hidden; }
   height: 100vh;
   will-change: transform, filter;
 }
-#dj-loader-root .dj-loader-curtain-half.dj-loader-left  .dj-loader-curtain-content { left: 0; }
-#dj-loader-root .dj-loader-curtain-half.dj-loader-right .dj-loader-curtain-content { right: 0; }
-
-/* Inset shadow en el borde interno: simula que el telón tiene
-   grosor y profundidad. Sutil, sin convertirse en línea. */
-#dj-loader-root .dj-loader-curtain-half.dj-loader-left .dj-loader-curtain-content {
-  box-shadow: inset -3px 0 18px -6px rgba(0,0,0,0.55);
-  animation: dj-loader-curtain-out-left var(--t-curtain-dur) var(--t-curtain) cubic-bezier(.55, 0, .15, 1) forwards;
+/* Cada triángulo se desliza hacia su esquina:
+   - NE va al exterior superior-derecho con leve rotación CCW
+   - SW va al exterior inferior-izquierdo con leve rotación CCW
+   La rotación de ~3deg sugiere que la tela "pivota" por la
+   tensión de las cuerdas que la jalan al separarse. */
+#dj-loader-root .dj-loader-curtain-half.dj-loader-tr {
+  transform-origin: 100% 0; /* pivota desde la esquina superior derecha */
+  animation: dj-loader-curtain-out-tr var(--t-curtain-dur) var(--t-curtain) cubic-bezier(.55, 0, .15, 1) forwards;
 }
-#dj-loader-root .dj-loader-curtain-half.dj-loader-right .dj-loader-curtain-content {
-  box-shadow: inset 3px 0 18px -6px rgba(0,0,0,0.55);
-  animation: dj-loader-curtain-out-right var(--t-curtain-dur) var(--t-curtain) cubic-bezier(.55, 0, .15, 1) forwards;
+#dj-loader-root .dj-loader-curtain-half.dj-loader-bl {
+  transform-origin: 0 100%; /* pivota desde la esquina inferior izquierda */
+  animation: dj-loader-curtain-out-bl var(--t-curtain-dur) var(--t-curtain) cubic-bezier(.55, 0, .15, 1) forwards;
 }
-/* cubic-bezier(.55, 0, .15, 1) = arranque con inercia, aceleración
-   suave, deceleración prolongada al final. Sensación física de
-   tela pesada empujada por una fuerza, no robótica como linear. */
-@keyframes dj-loader-curtain-out-left {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-100%); }
+@keyframes dj-loader-curtain-out-tr {
+  0%   { transform: translate(0, 0)      rotate(0); }
+  35%  { transform: translate(2%, -2%)   rotate(0.6deg); }
+  100% { transform: translate(108%, -108%) rotate(2deg); }
 }
-@keyframes dj-loader-curtain-out-right {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(100%); }
+@keyframes dj-loader-curtain-out-bl {
+  0%   { transform: translate(0, 0)      rotate(0); }
+  35%  { transform: translate(-2%, 2%)   rotate(0.6deg); }
+  100% { transform: translate(-108%, 108%) rotate(2deg); }
 }
 
 /* ====================================================
