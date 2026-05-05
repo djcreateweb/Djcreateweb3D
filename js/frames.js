@@ -87,7 +87,7 @@ let rafId = null;
 // el overlay debe estar 100% opaco a tiempo para taparlo.
 const FADE_START_FRAME = 102;
 const FADE_END_FRAME = 110;
-const REVEAL_FRAME = 108; // cuándo aparece el hero-content
+const REVEAL_FRAME = 5; // hero-content visible casi desde el inicio del scroll → cascade dispara
 const FADE_START_PROG = FADE_START_FRAME / (TOTAL_FRAMES - 1);
 const FADE_END_PROG   = FADE_END_FRAME / (TOTAL_FRAMES - 1);
 const REVEAL_PROG     = REVEAL_FRAME / (TOTAL_FRAMES - 1);
