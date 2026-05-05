@@ -326,81 +326,8 @@ if (form) {
   // ── 6) MAGNETIC BUTTONS ─────────────────────────────────
   const finePointer = window.matchMedia('(pointer: fine)').matches;
 
-  // Custom light cursor: puntero luminoso para toda la experiencia.
-  const lightCursor = document.querySelector('.light-cursor');
-  if (lightCursor && finePointer) {
-    let cursorRaf = null;
-    let targetX = window.innerWidth / 2;
-    let targetY = window.innerHeight / 2;
-    let cursorX = targetX;
-    let cursorY = targetY;
-    let prevX = cursorX;
-    let prevY = cursorY;
-    let cursorOn = false;
-    const interactiveSel = 'a, button, select, summary, [role="button"], input[type="checkbox"], input[type="radio"], label, .portfolio-card, .plan-row__cta';
-    const textSel = 'input:not([type="checkbox"]):not([type="radio"]), textarea, [contenteditable="true"]';
-    const trails = Array.from({ length: REDUCE ? 0 : 7 }, (_, i) => {
-      const t = document.createElement('span');
-      t.className = 'light-trail';
-      t.style.setProperty('--trail-size', `${12 - i}px`);
-      t.style.setProperty('--trail-opacity', `${Math.max(.08, .28 - i * .03)}`);
-      document.body.appendChild(t);
-      return { el: t, x: cursorX, y: cursorY };
-    });
+  // Cursor custom eliminado — se usa el cursor del navegador.
 
-    function paintCursor() {
-      cursorX += (targetX - cursorX) * 0.34;
-      cursorY += (targetY - cursorY) * 0.34;
-      const vx = cursorX - prevX;
-      const vy = cursorY - prevY;
-      prevX = cursorX;
-      prevY = cursorY;
-
-      lightCursor.style.setProperty('--cursor-x', `${cursorX}px`);
-      lightCursor.style.setProperty('--cursor-y', `${cursorY}px`);
-      lightCursor.style.setProperty('--cursor-tilt-x', `${Math.max(-10, Math.min(10, vx * .9))}px`);
-      lightCursor.style.setProperty('--cursor-tilt-y', `${Math.max(-10, Math.min(10, vy * .9))}px`);
-
-      trails.forEach((t, i) => {
-        const pull = 0.18 - i * 0.012;
-        t.x += (cursorX - t.x) * pull;
-        t.y += (cursorY - t.y) * pull;
-        t.el.style.transform = `translate3d(${t.x}px, ${t.y}px, 0) translate(-50%, -50%)`;
-      });
-
-      if (cursorOn && (Math.abs(targetX - cursorX) > .1 || Math.abs(targetY - cursorY) > .1)) {
-        cursorRaf = requestAnimationFrame(paintCursor);
-      } else {
-        cursorRaf = null;
-      }
-    }
-
-    function hideCursor() {
-      cursorOn = false;
-      lightCursor.classList.remove('is-visible', 'is-pressing', 'is-interactive', 'is-text');
-      trails.forEach(t => t.el.classList.remove('is-visible'));
-    }
-
-    window.addEventListener('pointermove', (ev) => {
-      targetX = ev.clientX;
-      targetY = ev.clientY;
-      const target = ev.target;
-      cursorOn = true;
-      lightCursor.classList.add('is-visible');
-      trails.forEach(t => t.el.classList.add('is-visible'));
-      lightCursor.classList.toggle('is-interactive', !!target.closest(interactiveSel));
-      lightCursor.classList.toggle('is-text', !!target.closest(textSel));
-      if (!cursorRaf) cursorRaf = requestAnimationFrame(paintCursor);
-    }, { passive: true });
-
-    window.addEventListener('pointerdown', () => {
-      lightCursor.classList.add('is-pressing');
-    }, { passive: true });
-    window.addEventListener('pointerup', () => {
-      lightCursor.classList.remove('is-pressing');
-    }, { passive: true });
-    document.addEventListener('pointerleave', hideCursor);
-  }
   if (finePointer && !REDUCE) {
     $$('.btn-main, .nav-cta').forEach(btn => {
       const STRENGTH = 0.22;
